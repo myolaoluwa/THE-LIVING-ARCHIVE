@@ -32,7 +32,7 @@ export default async function BookPage({
   const book = books.find((b) => b.slug === slug);
   if (!book) notFound();
   return (
-    <main id="main">
+    <main id="main" className="book-page">
       <div className="container">
         <nav aria-label="Breadcrumb" className="breadcrumb">
           <Link href="/">Home</Link>
@@ -65,7 +65,7 @@ export default async function BookPage({
             <ShareButton title={`${book.title} — Edmund Spencer Katso`} />
           </div>
         </section>
-        <section className="book-story">
+        <section className="book-story" data-reveal>
           <div>
             <Eyebrow>Between the covers</Eyebrow>
             <h2>
@@ -91,7 +91,7 @@ export default async function BookPage({
           </div>
         </section>
         <section className="related-section">
-          <div className="section-heading">
+          <div className="section-heading" data-reveal>
             <div>
               <Eyebrow>Continue exploring</Eyebrow>
               <h2>

@@ -12,8 +12,15 @@ const links = [
 export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const update = () => setScrolled(window.scrollY > 48);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
   useEffect(() => {
     const el = dialog.current;
     if (open) {
@@ -38,7 +45,9 @@ export function Header() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="site-header">
+      <header
+        className={`site-header ${pathname === "/" ? "header-cinematic" : ""} ${scrolled ? "is-scrolled" : ""}`}
+      >
         <div className="container header-inner">
           <Link
             href="/"

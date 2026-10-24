@@ -1,0 +1,2054 @@
+/* The Living Archive — cinematic editorial system.
+   Scoped to public pages; authentication and administration keep independent styles. */
+.public-site {
+  --cinema: #142328;
+  --paper: #f4f0e7;
+  --paper-light: #faf7f0;
+  --brass: #cdb085;
+  --gutter: clamp(22px, 4.5vw, 80px);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  background: var(--paper);
+}
+.public-site .container {
+  width: calc(100% - var(--gutter) * 2);
+  max-width: 1360px;
+}
+.public-site h1,
+.public-site h2,
+.public-site h3 {
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.public-site h2 {
+  font-size: clamp(46px, 5.1vw, 78px);
+  line-height: 1.01;
+}
+.public-site .eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.19em;
+  font-weight: 500;
+}
+.public-site .button {
+  min-height: 57px;
+  padding: 16px 24px;
+  font-size: 14px;
+  gap: 35px;
+  border-radius: 1px;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    border-color 0.3s,
+    transform 0.45s var(--ease-out);
+}
+.public-site .button:hover {
+  transform: translateY(-3px);
+}
+.public-site .button svg,
+.public-site .text-link svg {
+  transition: transform 0.4s var(--ease-out);
+}
+.public-site .button:hover svg {
+  transform: translateX(5px);
+}
+.public-site .text-link {
+  font-size: 14px;
+  min-height: 48px;
+  border-color: #94734b;
+}
+.public-site a:focus-visible,
+.public-site button:focus-visible {
+  outline-color: #9a6c2b;
+  outline-width: 3px;
+}
+.public-site .reading-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  height: 2px;
+  background: var(--brass);
+  transform-origin: left;
+  transform: scaleX(var(--reading-progress, 0));
+  z-index: 200;
+  pointer-events: none;
+}
+/* Navigation feels like the masthead of a publication, with a readable scrolled state. */
+.public-site .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  background: #f4f0e7f5;
+  backdrop-filter: blur(18px);
+  transition:
+    background 0.4s,
+    box-shadow 0.4s;
+}
+.public-site .header-inner {
+  height: 100px;
+  gap: 28px;
+  border-bottom-color: #17253b20;
+}
+.public-site .brand > span {
+  font-size: 26px;
+}
+.public-site .brand small {
+  font-size: 9px;
+  letter-spacing: 0.24em;
+}
+.public-site .brand > svg {
+  width: 30px;
+  height: 39px;
+}
+.public-site .desktop-nav {
+  gap: 30px;
+}
+.public-site .desktop-nav a {
+  font-size: 13px;
+}
+.public-site .header-cta {
+  border: 0;
+  border-bottom: 1px solid #8a7049;
+  padding: 8px 0;
+  min-height: 44px;
+  font-size: 13px;
+  gap: 22px;
+}
+.public-site .header-cta:hover {
+  background: transparent;
+}
+.public-site .header-cinematic {
+  position: fixed;
+  left: 0;
+  right: 0;
+  background: transparent;
+  color: var(--paper);
+  backdrop-filter: none;
+}
+.public-site .header-cinematic.is-scrolled {
+  background: #142328f2;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 1px #ffffff18;
+}
+.public-site .header-cinematic .brand,
+.public-site .header-cinematic .desktop-nav a,
+.public-site .header-cinematic .header-cta {
+  color: #f4f0e7;
+}
+.public-site .header-cinematic .brand > svg {
+  color: var(--brass);
+}
+.public-site .header-cinematic .header-inner {
+  border-color: #ffffff26;
+}
+.public-site .header-cinematic .desktop-nav a[aria-current="page"]::after {
+  background: var(--brass);
+}
+.public-site .header-cinematic .menu-trigger {
+  border-color: #ffffff50;
+}
+.public-site .header-cinematic .menu-trigger span {
+  background: var(--paper);
+}
+.public-site .mobile-dialog {
+  background: var(--cinema);
+  color: var(--paper);
+  padding: 32px;
+  width: min(100%, 520px);
+  border-left: 1px solid #ffffff30;
+}
+.public-site .mobile-dialog nav a {
+  color: var(--paper);
+  border-color: #ffffff28;
+}
+.public-site .mobile-dialog .close-menu,
+.public-site .mobile-dialog .eyebrow,
+.public-site .mobile-dialog nav small,
+.public-site .mobile-note {
+  color: #d6c4a9;
+}
+.public-site .mobile-dialog::backdrop {
+  background: #0c181bc7;
+  backdrop-filter: blur(7px);
+}
+/* Opening: one authentic photograph, composed like a film still. */
+.public-site .cinematic-hero {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  min-height: min(920px, 100svh);
+  padding: 155px var(--gutter) 108px;
+  background: var(--cinema);
+  color: var(--paper);
+  isolation: isolate;
+}
+.public-site .hero-copy {
+  position: relative;
+  z-index: 3;
+  width: min(620px, 52%);
+  padding: 0;
+  margin-left: max(0px, calc((100vw - 1520px) / 2));
+}
+.public-site .hero-edition {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: #c9b596;
+  margin-bottom: 35px;
+}
+.public-site .hero-edition > span {
+  border-left: 1px solid #ffffff40;
+  padding-left: 18px;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+.public-site .hero-copy > .eyebrow {
+  color: #e9e4d9;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.17em;
+}
+.public-site .gold-line {
+  background: #c5a579;
+  width: 26px;
+}
+.public-site .hero h1 {
+  color: #f6f2e9;
+  font-size: clamp(74px, 7.8vw, 119px);
+  line-height: 0.88;
+  letter-spacing: -0.05em;
+  margin: 26px 0 24px;
+}
+.public-site .hero h1 em {
+  color: #ddc5a3;
+}
+.public-site .hero-profession {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #d7c9b4;
+  margin-bottom: 13px;
+}
+.public-site .hero-description {
+  max-width: 380px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.85;
+  color: #dce0d9;
+}
+.public-site .hero-actions {
+  margin-top: 27px;
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+.public-site .hero-actions .button {
+  background: #d1b48b;
+  border-color: #d1b48b;
+  color: #142328;
+}
+.public-site .hero-actions .button:hover {
+  background: #eadac1;
+  border-color: #eadac1;
+}
+.public-site .hero-actions .text-link {
+  color: var(--paper);
+  border-color: #ad9876;
+  font-size: 13px;
+  gap: 15px;
+}
+.public-site .hero-footnote {
+  display: none;
+}
+.public-site .hero-figure {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 69%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  z-index: 0;
+}
+.public-site .hero-figure .portrait {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+}
+.public-site .hero-figure .portrait-photo {
+  object-position: 42% 36%;
+}
+.public-site .hero-figure::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      #142328 0%,
+      #142328ed 6%,
+      #142328aa 21%,
+      #14232800 52%
+    ),
+    linear-gradient(
+      0deg,
+      #142328ed 0%,
+      #14232800 26%,
+      #14232815 73%,
+      #14232899 100%
+    );
+  pointer-events: none;
+}
+.public-site .hero-figure figcaption {
+  position: absolute;
+  z-index: 2;
+  bottom: 42px;
+  right: var(--gutter);
+  left: 25%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  width: auto;
+  padding: 0;
+  color: #e4daca;
+  font-size: 10px;
+  letter-spacing: 0.07em;
+}
+.public-site .hero-figure figcaption > span:first-child {
+  color: #f4f0e7;
+  font-family: var(--serif);
+  font-size: 22px;
+  letter-spacing: 0;
+}
+.public-site .hero-figure figcaption > span:last-child {
+  max-width: 155px;
+  font-size: 10px;
+}
+.public-site .hero-scroll {
+  position: absolute;
+  z-index: 3;
+  bottom: 38px;
+  left: var(--gutter);
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+  min-height: 44px;
+  color: #d3c3aa;
+  font-size: 9px;
+  letter-spacing: 0.19em;
+}
+.public-site .hero-scroll > svg {
+  transform: rotate(90deg);
+}
+.public-site .hero-coordinate {
+  position: absolute;
+  z-index: 2;
+  right: 32px;
+  top: 47%;
+  writing-mode: vertical-rl;
+  color: #ece0ca;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+}
+.public-site .archive-strip {
+  background: #e7e0d2;
+  border: 0;
+  padding: 0;
+}
+.public-site .archive-strip > .container {
+  display: flex;
+  min-height: 76px;
+  justify-content: space-between;
+  gap: 24px;
+  color: #4c514b;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+.public-site .archive-strip span:first-child {
+  font-family: var(--serif);
+  font-size: 23px;
+  letter-spacing: -0.02em;
+  color: var(--navy);
+}
+.public-site .archive-strip .strip-star {
+  color: #846a43;
+  font-size: 20px;
+}
+/* Collection / objects on a museum shelf. */
+.public-site .section {
+  padding-block: 112px;
+}
+.public-site .section-heading {
+  margin-bottom: 22px;
+  gap: 40px;
+}
+.public-site .section-heading h2 {
+  margin-top: 20px;
+}
+.public-site .section-intro {
+  font-size: 16px;
+  max-width: 510px;
+  margin-top: 24px;
+  line-height: 1.8;
+}
+.public-site .book-grid {
+  gap: 30px;
+  margin-top: 48px;
+  align-items: stretch;
+}
+.public-site .book-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.public-site .book-stage {
+  aspect-ratio: auto;
+  height: 430px;
+  padding: 60px 30px 55px;
+  border: 1px solid #17253b16;
+  isolation: isolate;
+}
+.public-site .book-stage.sage,
+.public-site .detail-stage.sage {
+  background:
+    radial-gradient(ellipse at 35% 20%, #eeeee4, transparent 65%),
+    linear-gradient(140deg, #d6d9c9, #bdc6b5);
+}
+.public-site .book-stage.walnut,
+.public-site .detail-stage.walnut {
+  background:
+    radial-gradient(ellipse at 35% 20%, #f3e9d8, transparent 65%),
+    linear-gradient(140deg, #d9cbbb, #c5ad96);
+}
+.public-site .book-stage.navy,
+.public-site .detail-stage.navy {
+  background:
+    radial-gradient(ellipse at 35% 20%, #e3e8e4, transparent 65%),
+    linear-gradient(140deg, #c3d0cd, #98afac);
+}
+.public-site .book-stage::before,
+.public-site .detail-stage::before {
+  content: "";
+  position: absolute;
+  inset: 15px;
+  border: 1px solid #ffffff55;
+  z-index: -1;
+  pointer-events: none;
+}
+.public-site .book-stage::after {
+  content: "";
+  position: absolute;
+  width: 64%;
+  height: 25px;
+  bottom: 42px;
+  background: #192c2440;
+  filter: blur(15px);
+  border-radius: 50%;
+  z-index: -1;
+  transition:
+    transform 0.7s var(--ease-out),
+    opacity 0.7s;
+}
+.public-site .stage-index {
+  inset: 25px auto auto 27px;
+  color: #3c4a42;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+}
+.public-site .book-stage .book-cover {
+  width: auto;
+  height: 292px;
+  max-width: 78%;
+  flex: none;
+  transform: perspective(1200px) rotateY(-12deg) rotateZ(-3deg);
+}
+/* A physical mockup around the unchanged, authentic cover artwork. */
+.public-site .book-cover {
+  --cover-cloth: #3c4936;
+  isolation: isolate;
+  border-radius: 1px 3px 3px 1px;
+  background: var(--cover-cloth);
+  box-shadow:
+    1px 2px 2px #0b171c45,
+    8px 10px 12px #16241e22,
+    20px 28px 35px #16241e38;
+  transition:
+    transform 0.8s var(--ease-out),
+    box-shadow 0.8s;
+}
+.public-site .book-cover.walnut {
+  --cover-cloth: #624b35;
+}
+.public-site .book-cover.navy {
+  --cover-cloth: #354b4b;
+}
+.public-site .book-cover img {
+  z-index: 1;
+  border-radius: inherit;
+}
+.public-site .book-cover::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: calc(100% - 1px);
+  top: 3px;
+  bottom: 3px;
+  width: 8px;
+  background: repeating-linear-gradient(
+    0deg,
+    #e9e2cf 0 1px,
+    #c8c1ad 1px 2px,
+    #f7f1e3 2px 4px
+  );
+  border: 1px solid #aaa28b;
+  border-left: 0;
+  border-radius: 0 2px 2px 0;
+  transform: skewY(10deg);
+  transform-origin: left center;
+  box-shadow: 2px 1px 0 var(--cover-cloth);
+  pointer-events: none;
+}
+.public-site .book-cover::after {
+  z-index: 2;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      110deg,
+      transparent 28%,
+      #ffffff04 42%,
+      #ffffff1c 49%,
+      transparent 63%
+    ),
+    linear-gradient(
+      90deg,
+      #07100f38,
+      #07100f12 1.6%,
+      #ffffff75 2.1%,
+      transparent 4%,
+      #07100f18 6%,
+      transparent 10%
+    );
+  background-size:
+    220% 100%,
+    100% 100%;
+  background-position:
+    100% 0,
+    0 0;
+  border-left: 1px solid #ffffff55;
+  border-right: 1px solid #00000035;
+  box-shadow:
+    inset 0 1px #ffffff35,
+    inset 0 -1px #00000020;
+  transition: background-position 0.9s var(--ease-out);
+}
+.public-site .book-stage:hover .book-cover,
+.public-site .book-stage:focus-visible .book-cover {
+  transform: perspective(1200px) rotateY(-4deg) rotateZ(0deg) translateY(-12px);
+  box-shadow:
+    2px 3px 3px #0b171c35,
+    12px 18px 18px #16241e25,
+    24px 38px 40px #16241e38;
+}
+.public-site .book-stage:hover .book-cover::after,
+.public-site .book-stage:focus-visible .book-cover::after,
+.public-site .feature-art:hover .book-cover::after {
+  background-position:
+    0 0,
+    0 0;
+}
+.public-site .book-stage:hover::after {
+  transform: scale(0.85);
+  opacity: 0.7;
+}
+.public-site .stage-arrow {
+  width: 42px;
+  height: 42px;
+  bottom: 23px;
+  right: 24px;
+  border-color: #42564b77;
+  background: #ffffff30;
+}
+.public-site .book-card-copy {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 27px 2px 0;
+}
+.public-site .book-card-copy .eyebrow {
+  color: #5c624f;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+.public-site .book-card h3 {
+  font-size: clamp(33px, 3vw, 43px);
+  line-height: 1.05;
+  margin-top: 12px;
+}
+.public-site .book-subtitle {
+  font-size: 23px;
+  line-height: 1.2;
+  margin-top: 9px;
+  max-width: 340px;
+  min-height: 58px;
+  color: #53584d;
+}
+.public-site .book-description {
+  font-size: 16px;
+  line-height: 1.85;
+  min-height: 84px;
+  max-width: 350px;
+  margin-top: 19px;
+  margin-bottom: 23px;
+}
+.public-site .book-card-bottom {
+  margin-top: auto;
+  padding-top: 18px;
+  display: block;
+}
+.public-site .format {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+.public-site .book-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 15px;
+  margin-top: 8px;
+}
+.public-site .book-card-bottom .text-link,
+.public-site .retailer-link {
+  font-size: 13px;
+  min-height: 44px;
+}
+.public-site .retailer-link {
+  color: #31473e;
+}
+/* The author: an intimate, dark editorial interlude. */
+.public-site .author-section {
+  position: relative;
+  background: var(--cinema);
+  border: 0;
+  padding-block: 110px;
+  color: #dce0d8;
+}
+.public-site .author-grid {
+  grid-template-columns: 0.9fr 1fr;
+  gap: 10%;
+}
+.public-site .author-figure .portrait {
+  height: 560px;
+  min-height: 0;
+}
+.public-site .author-figure .portrait-photo {
+  object-position: 38% center;
+}
+.public-site .author-figure {
+  padding: 0;
+}
+.public-site .author-figure figcaption {
+  color: #c8b697;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  padding-top: 19px;
+}
+.public-site .author-copy .eyebrow {
+  color: #d5bd98;
+}
+.public-site .author-copy h2 {
+  color: var(--paper);
+  font-size: clamp(53px, 5.7vw, 83px);
+  margin-top: 24px;
+}
+.public-site .author-copy h2 em {
+  color: #ddc5a3;
+}
+.public-site .author-copy .standfirst {
+  font-family: var(--serif);
+  font-size: 30px;
+  line-height: 1.25;
+  color: #ede6da;
+  margin-top: 32px;
+}
+.public-site .author-copy > p:not(.eyebrow):not(.standfirst) {
+  color: #c5cec7;
+  font-size: 15px;
+  line-height: 1.9;
+}
+.public-site .author-copy .text-link {
+  color: var(--paper);
+  margin-top: 30px;
+}
+.public-site .author-signature {
+  border-color: #ffffff28;
+  margin-top: 36px;
+  color: #dfc8a5;
+  font-size: 29px;
+}
+.public-site .author-signature span {
+  color: #b9c5bc;
+  font-size: 9px;
+}
+.public-site .worlds-section {
+  padding-block: 115px;
+}
+.public-site .heading-note {
+  font-size: 15px;
+  line-height: 1.9;
+}
+.public-site .worlds-grid {
+  gap: 0;
+  margin-top: 55px;
+  border-block: 1px solid #c9c6b9;
+}
+.public-site .world-card {
+  padding: 44px 42px 42px 0;
+  border: 0;
+  gap: 30px;
+  background: none;
+  transition: background 0.4s;
+}
+.public-site .world-card + .world-card {
+  border-left: 1px solid #c9c6b9;
+  padding-left: 42px;
+  padding-right: 0;
+}
+.public-site .world-number {
+  font-size: 86px;
+  color: #846f50;
+  line-height: 1;
+}
+.public-site .world-card h3 {
+  font-size: 38px;
+}
+.public-site .world-card p:not(.eyebrow) {
+  font-size: 15px;
+  line-height: 1.9;
+}
+.public-site .world-card .text-link {
+  font-size: 13px;
+}
+.public-site .feature-section {
+  background: #293c35;
+  color: #dce2d9;
+  padding-block: 92px;
+  overflow: hidden;
+}
+.public-site .feature-copy h2 {
+  color: #f4f0e7;
+  font-size: clamp(68px, 7.5vw, 112px);
+  line-height: 0.96;
+}
+.public-site .feature-copy h2 em {
+  color: #ddc5a3;
+}
+.public-site .feature-copy .eyebrow {
+  color: #dbc49f;
+}
+.public-site .feature-copy > p {
+  color: #d1dbd0;
+  font-size: 16px;
+}
+.public-site .feature-copy .feature-subtitle {
+  font-family: var(--serif);
+  font-size: 30px;
+  color: #ddc5a3;
+}
+.public-site .feature-copy .button {
+  color: #192923;
+  background: #e5d7be;
+  border-color: #e5d7be;
+}
+.public-site .feature-formats {
+  font-size: 10px;
+  color: #cbd5c9;
+}
+.public-site .feature-art {
+  min-height: 480px;
+  background: radial-gradient(ellipse at center, #a5ae8260, transparent 70%);
+}
+.public-site .feature-art .book-cover {
+  max-width: 290px;
+  width: 55%;
+  transform: perspective(1200px) rotateY(-14deg) rotateZ(5deg);
+}
+.public-site .feature-art:hover .book-cover {
+  transform: perspective(1200px) rotateY(-4deg) rotateZ(1deg) translateY(-8px);
+}
+.public-site .feature-orbit {
+  width: 400px;
+  height: 400px;
+  border-color: #ced4bc36;
+}
+.public-site .feature-art-label,
+.public-site .feature-index {
+  color: #ccd5c5;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+}
+.public-site .closing {
+  padding-block: 115px;
+}
+.public-site .closing h2 {
+  font-size: clamp(54px, 6.5vw, 96px);
+}
+.public-site .closing > p:not(.eyebrow) {
+  font-size: 16px;
+}
+/* Interior pages share the publication's scale and rhythm. */
+.public-site .page-opening {
+  padding-top: 88px;
+  padding-bottom: 62px;
+  border-bottom: 1px solid #c9c6b9;
+}
+.public-site .page-opening h1 {
+  font-size: clamp(62px, 7.3vw, 106px);
+  line-height: 0.98;
+  margin-top: 29px;
+  max-width: 1100px;
+}
+.public-site .opening-bottom {
+  margin-top: 35px;
+  gap: 35px;
+}
+.public-site .opening-bottom > p {
+  font-size: 16px;
+  line-height: 1.9;
+  max-width: 550px;
+}
+.public-site .collection-count {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+}
+.public-site .collection-section {
+  padding-top: 12px;
+  padding-bottom: 84px;
+}
+.public-site .collection-note {
+  margin-top: 58px;
+  border-color: #c9c6b9;
+  padding-top: 30px;
+  gap: 40px;
+}
+.public-site .collection-note > p {
+  font-size: 16px;
+  line-height: 1.9;
+}
+.public-site .small-closing {
+  border-top: 1px solid #c9c6b9;
+  padding-block: 65px 90px;
+}
+.public-site .breadcrumb {
+  padding-block: 28px;
+  gap: 13px;
+  font-size: 12px;
+  border-bottom: 1px solid #d5d0c3;
+}
+.public-site .book-detail {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8%;
+  padding-top: 45px;
+  padding-bottom: 78px;
+  align-items: start;
+}
+.public-site .detail-stage {
+  aspect-ratio: auto;
+  min-width: 0;
+  min-height: 680px;
+  position: sticky;
+  top: 130px;
+  padding: 75px 35px;
+}
+.public-site .detail-stage .book-cover {
+  width: auto;
+  height: 430px;
+  max-width: 80%;
+  max-height: none;
+}
+.public-site .detail-stage-caption {
+  color: #3b5045;
+  font-size: 10px;
+  bottom: 28px;
+}
+.public-site .detail-copy {
+  min-width: 0;
+  padding-top: 0;
+}
+.public-site .detail-copy > .eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+.public-site .detail-copy h1 {
+  font-size: clamp(62px, 6.3vw, 94px);
+  line-height: 0.98;
+  margin-top: 20px;
+}
+.public-site .detail-subtitle {
+  font-size: 32px;
+  line-height: 1.15;
+  color: #5b6256;
+  max-width: 470px;
+  margin-top: 18px;
+}
+.public-site .byline {
+  font-size: 13px;
+  margin-top: 23px;
+}
+.public-site .detail-description {
+  font-size: 16px;
+  line-height: 1.85;
+  max-width: 470px;
+  margin-top: 24px;
+}
+.public-site .editions {
+  margin-top: 29px;
+  padding-top: 20px;
+}
+.public-site .editions > .eyebrow {
+  font-size: 10px;
+  margin-bottom: 15px;
+}
+.public-site .edition-option {
+  padding-block: 19px;
+}
+.public-site .edition-option h2 {
+  font: 500 15px/1.5 var(--sans);
+  letter-spacing: -0.015em;
+}
+.public-site .edition-option .availability {
+  font-size: 11px;
+  color: #5a6255;
+}
+.public-site .edition-option > p:not(.edition-note) {
+  font-size: 13px;
+}
+.public-site .edition-option .button {
+  width: 100%;
+  min-height: 50px;
+  font-size: 13px;
+}
+.public-site .edition-option .edition-note {
+  font-size: 11px;
+  line-height: 1.8;
+}
+.public-site .edition-amazon {
+  background: var(--cinema);
+  color: var(--paper);
+  padding: 24px;
+  border: 0;
+  margin-top: 10px;
+}
+.public-site .edition-amazon h2 {
+  color: #f4f0e7;
+}
+.public-site .edition-amazon .availability,
+.public-site .edition-amazon > p:not(.edition-note),
+.public-site .edition-amazon .edition-note {
+  color: #d2dace;
+}
+.public-site .edition-amazon .retailer-button {
+  background: #d4b98f;
+  border-color: #d4b98f;
+  color: #142328;
+}
+.public-site .edition-amazon .retailer-button:hover {
+  background: #e6d4b5;
+}
+.public-site .book-story {
+  padding-block: 80px;
+  border-block: 1px solid #c9c6b9;
+  gap: 10%;
+}
+.public-site .book-story .reading-copy > p {
+  font-size: 18px;
+  line-height: 1.95;
+}
+.public-site .book-story .reading-copy > p:first-child::first-letter {
+  float: left;
+  font-family: var(--serif);
+  font-size: 76px;
+  line-height: 0.8;
+  padding: 12px 10px 0 0;
+  color: #6c6048;
+}
+.public-site .book-story .reading-copy > p.source-note {
+  font-size: 12px;
+}
+.public-site .theme-list {
+  gap: 8px;
+  margin-top: 28px;
+}
+.public-site .theme-list > span {
+  font-size: 11px;
+  border-color: #bcbcae;
+  padding: 8px 11px;
+}
+.public-site .related-section {
+  padding-block: 80px 105px;
+}
+.public-site .related-grid {
+  max-width: none;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.public-site .related-grid .book-stage {
+  height: 450px;
+}
+.public-site .related-grid .book-cover {
+  height: 310px;
+}
+.public-site .related-grid .book-subtitle {
+  min-height: 0;
+}
+.public-site .about-intro {
+  background: var(--cinema);
+  color: #d5ddd3;
+}
+.public-site .about-opening {
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 8%;
+  padding-block: 80px;
+}
+.public-site .about-opening h1 {
+  font-size: clamp(63px, 6.8vw, 100px);
+  line-height: 0.98;
+  color: #f4f0e7;
+}
+.public-site .about-opening h1 em {
+  color: #ddc5a3;
+}
+.public-site .about-opening .eyebrow {
+  color: #d6bd97;
+}
+.public-site .about-opening .standfirst {
+  font-size: 26px;
+  font-family: var(--serif);
+  color: #e8d4b3;
+  margin-top: 35px;
+}
+.public-site .about-opening > div > p:last-child {
+  color: #d4ddd2;
+  font-size: 16px;
+  line-height: 1.9;
+  max-width: 430px;
+}
+.public-site .about-opening figure .portrait {
+  height: 590px;
+}
+.public-site .about-opening .portrait-photo {
+  object-position: 39% center;
+}
+.public-site .about-opening figcaption {
+  color: #c6b38f;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+}
+.public-site .biography-section {
+  border: 0;
+  padding-block: 105px;
+  gap: 12%;
+}
+.public-site .biography-sidebar {
+  align-self: start;
+  position: sticky;
+  top: 140px;
+}
+.public-site .biography-chapters h3 {
+  font-size: 42px;
+}
+.public-site .biography-chapters article {
+  padding-bottom: 39px;
+  margin-bottom: 39px;
+}
+.public-site .biography-chapters article > p:last-child {
+  font-size: 17px;
+  line-height: 1.95;
+}
+.public-site .milestones {
+  background: #e5e3d7;
+  border: 0;
+  padding-block: 85px;
+}
+.public-site .timeline {
+  gap: 90px;
+  margin-top: 52px;
+}
+.public-site .timeline article > span {
+  font-size: 67px;
+  color: #655b44;
+}
+.public-site .timeline h3 {
+  font-size: 33px;
+}
+.public-site .timeline p {
+  font-size: 16px;
+  max-width: 450px;
+}
+.public-site .contact-opening {
+  padding-bottom: 65px;
+}
+.public-site .contact-opening > p:last-child {
+  font-size: 17px;
+  max-width: 500px;
+}
+.public-site .contact-layout {
+  gap: 10%;
+  grid-template-columns: 0.8fr 1.2fr;
+  padding-block: 75px 110px;
+}
+.public-site .contact-layout aside > p {
+  max-width: 340px;
+}
+.public-site .contact-aside-note {
+  border-top: 1px solid #c9c6b9;
+  padding-top: 26px;
+  margin-top: 30px;
+  max-width: 340px;
+}
+.public-site .contact-aside-note p {
+  font-size: 13px;
+}
+.public-site .contact-form {
+  border: 1px solid #d0cbbb;
+  background: #faf7f0;
+  padding: 36px;
+  box-shadow: 0 20px 60px #342d1910;
+}
+.public-site .form-notice {
+  border: 0;
+  border-left: 2px solid #9c815a;
+  background: #ece7da;
+  padding: 20px;
+  margin-bottom: 28px;
+}
+.public-site .form-notice p {
+  font-size: 13px;
+}
+.public-site .contact-form input:not([type="checkbox"]),
+.public-site .contact-form select,
+.public-site .contact-form textarea {
+  background: #fdfbf6;
+  border-color: #a9ab9b;
+  padding: 13px 15px;
+  font-size: 16px;
+  min-height: 51px;
+}
+.public-site .contact-form input:focus,
+.public-site .contact-form select:focus,
+.public-site .contact-form textarea:focus {
+  border-color: #776044;
+}
+.public-site .contact-form > label,
+.public-site .form-row label {
+  font-size: 13px;
+}
+.public-site .contact-form .button {
+  width: 100%;
+  margin-top: 24px;
+}
+.public-site .legal-page {
+  padding-block: 80px 110px;
+}
+.public-site .legal-page .reading-copy {
+  font-size: 17px;
+}
+/* Closing credits. */
+.public-site .site-footer {
+  background: #142328;
+  color: #d6dccc;
+  padding-top: 45px;
+  border: 0;
+}
+.public-site .footer-masthead {
+  font-family: var(--serif);
+  font-size: clamp(50px, 10.6vw, 162px);
+  line-height: 1.15;
+  letter-spacing: -0.06em;
+  color: #dfd7c7;
+  border-bottom: 1px solid #ffffff28;
+  padding-bottom: 28px;
+  margin-bottom: 44px;
+  white-space: nowrap;
+}
+.public-site .footer-masthead em {
+  color: #c1a57e;
+}
+.public-site .footer-main {
+  padding-bottom: 50px;
+  gap: 60px;
+  grid-template-columns: 1.15fr 0.8fr 1fr;
+}
+.public-site .footer-main .brand {
+  color: #f4f0e7;
+}
+.public-site .footer-main .brand > svg {
+  color: #c1a57e;
+}
+.public-site .footer-main > div > p {
+  color: #bdc9bf;
+  font-size: 14px;
+  line-height: 1.9;
+}
+.public-site .footer-main nav .eyebrow,
+.public-site .footer-note .eyebrow {
+  color: #d9be94;
+  font-size: 10px;
+}
+.public-site .footer-main nav a {
+  color: #dce2d7;
+  font-size: 14px;
+  min-height: 40px;
+}
+.public-site .footer-main .footer-note p {
+  font-family: var(--serif);
+  color: #e9dfcc;
+  font-size: 30px;
+  line-height: 1.25;
+}
+.public-site .footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  border-color: #ffffff25;
+  padding-block: 25px;
+  color: #c7d0c3;
+  font-size: 11px;
+}
+.public-site .back-to-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+}
+/* Motion enhances the composition; it never intercepts scrolling or navigation. */
+@media (prefers-reduced-motion: no-preference) {
+  .public-site [data-reveal] {
+    transition:
+      opacity 0.8s var(--ease-out),
+      transform 1s var(--ease-out);
+  }
+  .public-site [data-revealed="pending"] {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  .public-site [data-revealed="true"] {
+    opacity: 1;
+    transform: none;
+  }
+  .public-site .hero-copy {
+    animation: archive-enter 1.1s 0.1s var(--ease-out) both;
+  }
+  .public-site .hero-figure {
+    animation: archive-image 1.5s var(--ease-out) both;
+  }
+  .public-site .page-opening > *,
+  .public-site .about-opening > div {
+    animation: archive-enter 0.9s var(--ease-out) both;
+  }
+  .public-site .page-opening h1 {
+    animation-delay: 0.1s;
+  }
+  .public-site .book-stage {
+    transition:
+      background 0.5s,
+      border-color 0.5s;
+  }
+  @keyframes archive-enter {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes archive-image {
+    from {
+      opacity: 0;
+      clip-path: inset(0 0 0 7%);
+    }
+    to {
+      opacity: 1;
+      clip-path: inset(0);
+    }
+  }
+}
+@media (min-width: 1600px) {
+  .public-site .hero-figure {
+    width: 66%;
+  }
+}
+@media (max-width: 1150px) {
+  .public-site .header-cta {
+    display: none;
+  }
+  .public-site .hero h1 {
+    font-size: 94px;
+  }
+  .public-site .hero-copy {
+    width: 56%;
+  }
+  .public-site .hero-description {
+    max-width: 330px;
+  }
+  .public-site .hero-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .public-site .hero-figure {
+    width: 76%;
+  }
+  .public-site .hero-figure::after {
+    background:
+      linear-gradient(90deg, #142328, #142328bd 22%, #14232800 67%),
+      linear-gradient(0deg, #142328, #14232800 50%, #14232866);
+  }
+  .public-site .hero-edition > span {
+    display: none;
+  }
+  .public-site .hero-figure figcaption > span:last-child {
+    display: none;
+  }
+  .public-site .hero-figure figcaption {
+    left: auto;
+    right: var(--gutter);
+  }
+  .public-site .book-grid {
+    gap: 22px;
+  }
+  .public-site .book-stage {
+    height: 365px;
+    padding-inline: 20px;
+  }
+  .public-site .book-stage .book-cover {
+    height: 235px;
+  }
+  .public-site .book-subtitle {
+    font-size: 22px;
+    min-height: 80px;
+  }
+  .public-site .book-description {
+    min-height: 110px;
+  }
+  .public-site .world-card {
+    gap: 18px;
+  }
+  .public-site .world-card + .world-card {
+    padding-left: 28px;
+  }
+  .public-site .world-number {
+    font-size: 65px;
+  }
+  .public-site .world-card h3 {
+    font-size: 32px;
+  }
+  .public-site .book-detail {
+    gap: 6%;
+  }
+  .public-site .detail-stage {
+    min-height: 570px;
+  }
+  .public-site .detail-stage .book-cover {
+    height: 340px;
+  }
+  .public-site .detail-subtitle {
+    font-size: 29px;
+  }
+  .public-site .about-opening figure .portrait {
+    height: 540px;
+  }
+}
+@media (max-width: 850px) {
+  .public-site .header-inner {
+    height: 88px;
+  }
+  .public-site .desktop-nav {
+    display: none;
+  }
+  .public-site .menu-trigger {
+    display: inline-flex;
+  }
+  .public-site .hero-coordinate {
+    display: none;
+  }
+  .public-site .hero h1 {
+    font-size: clamp(76px, 10.9vw, 93px);
+  }
+  .public-site .hero-copy {
+    width: 65%;
+  }
+  .public-site .hero-description {
+    max-width: 310px;
+  }
+  .public-site .hero-figure {
+    width: 85%;
+  }
+  .public-site .hero-figure figcaption {
+    display: none;
+  }
+  .public-site .archive-strip > .container {
+    gap: 14px;
+    min-height: 65px;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+  }
+  .public-site .archive-strip .strip-star,
+  .public-site .archive-strip svg {
+    display: none;
+  }
+  .public-site .archive-strip span:first-child {
+    font-size: 20px;
+  }
+  .public-site .section {
+    padding-block: 80px;
+  }
+  .public-site .book-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 24px;
+  }
+  .public-site .book-stage {
+    height: 400px;
+  }
+  .public-site .book-stage .book-cover {
+    height: 270px;
+  }
+  .public-site .book-subtitle {
+    min-height: 65px;
+  }
+  .public-site .book-description {
+    min-height: 84px;
+  }
+  .public-site .author-grid {
+    gap: 6%;
+  }
+  .public-site .author-figure .portrait {
+    height: 510px;
+  }
+  .public-site .author-copy h2 {
+    font-size: 55px;
+  }
+  .public-site .author-copy .standfirst {
+    font-size: 26px;
+  }
+  .public-site .worlds-grid {
+    grid-template-columns: 1fr;
+  }
+  .public-site .world-card,
+  .public-site .world-card + .world-card {
+    padding: 35px 0;
+    border: 0;
+  }
+  .public-site .world-card + .world-card {
+    border-top: 1px solid #c9c6b9;
+  }
+  .public-site .feature-art {
+    min-height: 390px;
+  }
+  .public-site .feature-orbit {
+    width: 280px;
+    height: 280px;
+  }
+  .public-site .feature-art .book-cover {
+    width: 65%;
+  }
+  .public-site .book-detail {
+    gap: 6%;
+  }
+  .public-site .detail-stage {
+    min-height: 480px;
+    padding-inline: 18px;
+  }
+  .public-site .detail-stage .book-cover {
+    height: 280px;
+  }
+  .public-site .detail-copy h1 {
+    font-size: 63px;
+  }
+  .public-site .detail-subtitle {
+    font-size: 27px;
+  }
+  .public-site .edition-amazon {
+    padding: 20px;
+  }
+  .public-site .edition-option .button {
+    font-size: 14px;
+    gap: 12px;
+  }
+  .public-site .about-opening {
+    grid-template-columns: 1fr 1fr;
+    gap: 6%;
+    padding-block: 65px;
+  }
+  .public-site .about-opening h1 {
+    font-size: 63px;
+  }
+  .public-site .about-opening figure .portrait {
+    height: 500px;
+  }
+  .public-site .biography-section {
+    gap: 8%;
+    grid-template-columns: 0.8fr 1fr;
+  }
+  .public-site .biography-chapters h3 {
+    font-size: 35px;
+  }
+  .public-site .contact-layout {
+    gap: 6%;
+    grid-template-columns: 0.8fr 1.2fr;
+  }
+  .public-site .contact-form {
+    padding: 24px;
+  }
+  .public-site .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .public-site .footer-main {
+    gap: 30px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .public-site .footer-note {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .public-site {
+    --gutter: 24px;
+  }
+  .public-site .brand > span {
+    font-size: 23px;
+  }
+  .public-site .brand small {
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    margin-top: 7px;
+  }
+  .public-site .brand > svg {
+    width: 24px;
+    height: 33px;
+  }
+  .public-site .header-inner {
+    height: 83px;
+    gap: 15px;
+  }
+  .public-site .menu-trigger {
+    width: 43px;
+    height: 43px;
+  }
+  .public-site .cinematic-hero {
+    min-height: 0;
+    padding: 415px var(--gutter) 110px;
+  }
+  .public-site .hero-copy {
+    width: 100%;
+    margin: 0;
+  }
+  .public-site .hero-edition {
+    display: none;
+  }
+  .public-site .hero-copy > .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.13em;
+  }
+  .public-site .hero h1 {
+    font-size: clamp(64px, 17.6vw, 100px);
+    line-height: 0.88;
+    letter-spacing: -0.045em;
+    margin: 23px 0;
+  }
+  .public-site .hero-profession {
+    font-size: 9px;
+    margin-bottom: 12px;
+  }
+  .public-site .hero-description {
+    max-width: 340px;
+    font-size: 16px;
+    line-height: 1.85;
+  }
+  .public-site .hero-actions {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px 24px;
+    margin-top: 25px;
+  }
+  .public-site .hero-actions .button {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .public-site .hero-actions .text-link {
+    font-size: 13px;
+  }
+  .public-site .hero-figure {
+    width: 100%;
+    height: 590px;
+    inset: 0 0 auto;
+  }
+  .public-site .hero-figure .portrait-photo {
+    object-position: 40% 24%;
+  }
+  .public-site .hero-figure::after {
+    background: linear-gradient(
+      0deg,
+      #142328 0%,
+      #142328ed 9%,
+      #14232880 26%,
+      transparent 52%,
+      #14232815 70%,
+      #14232899 100%
+    );
+  }
+  .public-site .hero-scroll {
+    bottom: 28px;
+    font-size: 9px;
+  }
+  .public-site .archive-strip > .container {
+    min-height: 64px;
+    gap: 10px;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+  }
+  .public-site .archive-strip span:first-child {
+    font-size: 20px;
+  }
+  .public-site .archive-strip span:nth-child(2),
+  .public-site .archive-strip span:nth-child(6) {
+    display: none;
+  }
+  .public-site .section {
+    padding-block: 67px;
+  }
+  .public-site h2 {
+    font-size: 49px;
+  }
+  .public-site .section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 17px;
+    margin-bottom: 20px;
+  }
+  .public-site .section-heading h2 {
+    margin-top: 18px;
+  }
+  .public-site .section-intro {
+    margin-top: 14px;
+    font-size: 16px;
+  }
+  .public-site .book-grid {
+    grid-template-columns: 1fr;
+    gap: 45px;
+    margin-top: 32px;
+  }
+  .public-site .book-stage,
+  .public-site .collection-section .book-stage,
+  .public-site .related-grid .book-stage {
+    height: 410px;
+  }
+  .public-site .book-stage .book-cover,
+  .public-site .related-grid .book-cover {
+    height: 285px;
+  }
+  .public-site .book-card-copy {
+    padding-top: 24px;
+  }
+  .public-site .book-card h3 {
+    font-size: 39px;
+  }
+  .public-site .book-subtitle {
+    font-size: 25px;
+    min-height: 0;
+    max-width: 100%;
+  }
+  .public-site .book-description {
+    font-size: 16px;
+    min-height: 0;
+    max-width: 100%;
+    margin-block: 17px 23px;
+  }
+  .public-site .book-card-actions {
+    gap: 15px;
+  }
+  .public-site .book-card-bottom .text-link,
+  .public-site .retailer-link {
+    font-size: 13px;
+  }
+  .public-site .author-section {
+    padding-block: 65px;
+  }
+  .public-site .author-grid {
+    grid-template-columns: 1fr;
+    gap: 38px;
+  }
+  .public-site .author-figure .portrait {
+    height: 400px;
+  }
+  .public-site .author-copy h2 {
+    font-size: 60px;
+  }
+  .public-site .author-copy .standfirst {
+    font-size: 29px;
+    margin-top: 25px;
+  }
+  .public-site .author-copy > p:not(.eyebrow):not(.standfirst) {
+    font-size: 16px;
+  }
+  .public-site .author-signature {
+    font-size: 28px;
+  }
+  .public-site .worlds-section {
+    padding-block: 65px;
+  }
+  .public-site .heading-note {
+    margin-top: 8px;
+  }
+  .public-site .worlds-grid {
+    margin-top: 35px;
+  }
+  .public-site .world-card,
+  .public-site .world-card + .world-card {
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    gap: 20px;
+    padding-block: 32px;
+  }
+  .public-site .world-number {
+    font-size: 55px;
+  }
+  .public-site .world-card h3 {
+    font-size: 34px;
+  }
+  .public-site .world-card p:not(.eyebrow) {
+    font-size: 15px;
+  }
+  .public-site .feature-section {
+    padding-block: 65px 45px;
+  }
+  .public-site .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .public-site .feature-copy h2 {
+    font-size: 83px;
+  }
+  .public-site .feature-copy .feature-subtitle {
+    font-size: 29px;
+  }
+  .public-site .feature-copy > p {
+    font-size: 16px;
+  }
+  .public-site .feature-art {
+    min-height: 420px;
+  }
+  .public-site .feature-art .book-cover {
+    height: 310px;
+    width: auto;
+    max-width: 70%;
+  }
+  .public-site .feature-orbit {
+    width: 300px;
+    height: 300px;
+  }
+  .public-site .closing {
+    padding-block: 75px;
+  }
+  .public-site .closing h2 {
+    font-size: 58px;
+  }
+  .public-site .page-opening {
+    padding-top: 58px;
+    padding-bottom: 38px;
+  }
+  .public-site .page-opening h1 {
+    font-size: clamp(55px, 14vw, 82px);
+    margin-top: 24px;
+  }
+  .public-site .opening-bottom {
+    margin-top: 25px;
+    gap: 20px;
+  }
+  .public-site .opening-bottom > p {
+    font-size: 16px;
+  }
+  .public-site .collection-section {
+    padding-top: 10px;
+    padding-bottom: 60px;
+  }
+  .public-site .collection-note {
+    gap: 18px;
+    margin-top: 35px;
+  }
+  .public-site .small-closing {
+    padding-block: 50px 65px;
+    gap: 28px;
+  }
+  .public-site .small-closing h2 {
+    font-size: 45px;
+  }
+  .public-site .breadcrumb {
+    font-size: 11px;
+    padding-block: 21px;
+    gap: 9px;
+  }
+  .public-site .book-detail {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 35px;
+    padding-block: 28px 45px;
+  }
+  .public-site .detail-stage {
+    position: relative;
+    top: 0;
+    min-height: 450px;
+    padding-block: 65px;
+  }
+  .public-site .detail-stage .book-cover {
+    height: 315px;
+    max-width: 75%;
+  }
+  .public-site .detail-copy h1 {
+    font-size: 72px;
+    margin-top: 20px;
+  }
+  .public-site .detail-subtitle {
+    font-size: 30px;
+    margin-top: 16px;
+  }
+  .public-site .detail-description {
+    font-size: 16px;
+  }
+  .public-site .edition-option h2 {
+    font-size: 15px;
+  }
+  .public-site .edition-option .button {
+    font-size: 14px;
+  }
+  .public-site .edition-option > p:not(.edition-note) {
+    font-size: 14px;
+  }
+  .public-site .edition-amazon {
+    padding: 24px;
+  }
+  .public-site .book-story {
+    padding-block: 45px;
+    gap: 30px;
+  }
+  .public-site .book-story .reading-copy > p {
+    font-size: 17px;
+  }
+  .public-site .related-section {
+    padding-block: 55px 65px;
+  }
+  .public-site .related-grid {
+    grid-template-columns: 1fr;
+  }
+  .public-site .about-opening {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-block: 55px;
+  }
+  .public-site .about-opening h1 {
+    font-size: 68px;
+  }
+  .public-site .about-opening .standfirst {
+    margin-top: 25px;
+  }
+  .public-site .about-opening figure .portrait {
+    height: 420px;
+  }
+  .public-site .biography-section {
+    grid-template-columns: 1fr;
+    padding-block: 65px;
+    gap: 40px;
+  }
+  .public-site .biography-sidebar {
+    position: static;
+  }
+  .public-site .biography-sidebar > p:last-child {
+    max-width: 100%;
+  }
+  .public-site .biography-chapters h3 {
+    font-size: 37px;
+  }
+  .public-site .biography-chapters article > p:last-child {
+    font-size: 17px;
+  }
+  .public-site .milestones {
+    padding-block: 60px;
+  }
+  .public-site .timeline {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    margin-top: 35px;
+  }
+  .public-site .timeline article > span {
+    font-size: 60px;
+  }
+  .public-site .timeline h3 {
+    font-size: 31px;
+  }
+  .public-site .contact-opening > p:last-child {
+    font-size: 16px;
+  }
+  .public-site .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 37px;
+    padding-block: 45px 65px;
+  }
+  .public-site .contact-layout aside > p,
+  .public-site .contact-aside-note {
+    max-width: 100%;
+  }
+  .public-site .contact-form {
+    padding: 23px 20px;
+  }
+  .public-site .footer-masthead {
+    font-size: clamp(40px, 10.6vw, 70px);
+    padding-bottom: 25px;
+    margin-bottom: 34px;
+  }
+  .public-site .site-footer {
+    padding-top: 30px;
+  }
+  .public-site .footer-main {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-bottom: 35px;
+  }
+  .public-site .footer-main nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px 25px;
+  }
+  .public-site .footer-main nav .eyebrow {
+    grid-column: 1 / -1;
+    margin-bottom: 5px;
+  }
+  .public-site .footer-main nav a {
+    min-height: 44px;
+  }
+  .public-site .footer-main .brand > span {
+    font-size: 27px;
+  }
+  .public-site .footer-bottom {
+    font-size: 11px;
+    gap: 12px 25px;
+    padding-block: 23px;
+  }
+  .public-site .footer-bottom > span:nth-child(2) {
+    display: none;
+  }
+  .public-site .footer-bottom > span:first-child {
+    width: 100%;
+  }
+  .public-site .legal-page {
+    padding-block: 55px 65px;
+  }
+}
+@media (max-width: 360px) {
+  .public-site {
+    --gutter: 20px;
+  }
+  .public-site .brand > span {
+    font-size: 20px;
+  }
+  .public-site .brand small {
+    font-size: 7px;
+  }
+  .public-site .hero h1 {
+    font-size: 61px;
+  }
+  .public-site .cinematic-hero {
+    padding-top: 370px;
+  }
+  .public-site .hero-figure {
+    height: 540px;
+  }
+  .public-site .book-stage,
+  .public-site .collection-section .book-stage,
+  .public-site .related-grid .book-stage {
+    height: 365px;
+  }
+  .public-site .book-stage .book-cover {
+    height: 250px;
+  }
+  .public-site .detail-stage {
+    min-height: 400px;
+  }
+  .public-site .detail-stage .book-cover {
+    height: 275px;
+  }
+  .public-site .detail-copy h1 {
+    font-size: 62px;
+  }
+  .public-site .about-opening h1 {
+    font-size: 59px;
+  }
+  .public-site .feature-copy h2 {
+    font-size: 73px;
+  }
+  .public-site .feature-orbit {
+    width: 250px;
+    height: 250px;
+  }
+  .public-site .footer-masthead {
+    font-size: 38px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .public-site *,
+  .public-site *::before,
+  .public-site *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .public-site [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+@media print {
+  .public-site .reading-progress,
+  .public-site .hero-scroll,
+  .public-site .hero-coordinate {
+    display: none;
+  }
+  .public-site .hero,
+  .public-site .author-section,
+  .public-site .about-intro {
+    background: white;
+    color: black;
+  }
+  .public-site .hero h1,
+  .public-site .author-copy h2,
+  .public-site .about-opening h1 {
+    color: black;
+  }
+  .public-site [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.public-site [id] {
+  scroll-margin-top: 130px;
+}
+
+.public-site .button:disabled:hover {
+  transform: none;
+}
+
+/* Fixed-height editorial crops must not impose legacy intrinsic grid widths. */
+.public-site .portrait {
+  aspect-ratio: auto;
+}
+.public-site .author-grid > *,
+.public-site .about-opening > * {
+  min-width: 0;
+}

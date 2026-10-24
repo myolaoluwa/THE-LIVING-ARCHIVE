@@ -11,21 +11,23 @@ export default async function AboutPage() {
   const about = await getPublicPage("about");
   return (
     <main id="main">
-      <section className="container about-opening">
-        <div>
-          <Eyebrow>The author / A life in words</Eyebrow>
-          <h1>
-            {about.headline_first}
-            <br />
-            <em>{about.headline_second}</em>
-          </h1>
-          <p className="standfirst">Edmund Spencer Katso</p>
-          <p>{about.introduction}</p>
+      <section className="about-intro">
+        <div className="container about-opening">
+          <div>
+            <Eyebrow>The author / A life in words</Eyebrow>
+            <h1>
+              {about.headline_first}
+              <br />
+              <em>{about.headline_second}</em>
+            </h1>
+            <p className="standfirst">Edmund Spencer Katso</p>
+            <p>{about.introduction}</p>
+          </div>
+          <figure>
+            <Portrait priority />
+            <figcaption>EDMUND SPENCER KATSO / AT THE TYPEWRITER</figcaption>
+          </figure>
         </div>
-        <figure>
-          <Portrait priority />
-          <figcaption>EDMUND SPENCER KATSO / AT THE TYPEWRITER</figcaption>
-        </figure>
       </section>
       <section className="container biography-section">
         <div className="biography-sidebar">
@@ -42,7 +44,7 @@ export default async function AboutPage() {
         </div>
         <div className="biography-chapters">
           {about.chapters.map((chapter) => (
-            <article key={chapter.label}>
+            <article key={chapter.label} data-reveal>
               <Eyebrow>{chapter.label}</Eyebrow>
               <h3>{chapter.title}</h3>
               <p>{chapter.text}</p>
@@ -58,7 +60,7 @@ export default async function AboutPage() {
           </h2>
           <div className="timeline">
             {about.milestones.map((milestone) => (
-              <article key={milestone.label}>
+              <article key={milestone.label} data-reveal>
                 <span>{milestone.label}</span>
                 <h3>{milestone.title}</h3>
                 <p>{milestone.text}</p>

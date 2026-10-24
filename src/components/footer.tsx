@@ -6,6 +6,9 @@ export async function Footer() {
   return (
     <footer className="site-footer">
       <div className="container">
+        <div className="footer-masthead" aria-hidden="true">
+          The Living <em>Archive.</em>
+        </div>
         <div className="footer-main">
           <div>
             <Link href="/" className="brand footer-brand">
@@ -55,6 +58,9 @@ export async function Footer() {
           <span>© {new Date().getFullYear()} Edmund Spencer Katso</span>
           <span>Author · Educator · Historian</span>
           <Link href="/privacy">Privacy & site information</Link>
+          <a className="back-to-top" href="#top">
+            Back to top <Arrow diagonal />
+          </a>
         </div>
       </div>
     </footer>

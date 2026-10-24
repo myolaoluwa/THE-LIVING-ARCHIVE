@@ -29,7 +29,7 @@ test("Unconfigured administration explains setup and is accessible at three size
       .analyze();
     expect(audit.violations).toEqual([]);
     await page.screenshot({
-      path: `docs/review/admin-setup-${width}.png`,
+      path: `docs/review/cinematic/admin-setup-${width}.png`,
       fullPage: true,
     });
   }

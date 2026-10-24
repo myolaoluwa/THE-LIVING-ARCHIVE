@@ -39,8 +39,8 @@ export default async function BooksPage() {
         aria-label="The book collection"
       >
         <div className="book-grid">
-          {books.map((book) => (
-            <BookCard key={book.slug} book={book} />
+          {books.map((book, index) => (
+            <BookCard key={book.slug} book={book} priority={index === 0} />
           ))}
         </div>
         <div className="collection-note">

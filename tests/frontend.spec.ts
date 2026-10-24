@@ -21,6 +21,7 @@ const screenshotNames: Record<string, string> = {
 };
 for (const width of [320, 375, 768, 1024, 1440]) {
   test(`Public pages are usable at ${width}px`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.setViewportSize({ width, height: 1000 });
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
@@ -52,6 +53,28 @@ for (const width of [320, 375, 768, 1024, 1440]) {
         ),
         `${route} horizontal overflow`,
       ).toBe(true);
+      const clippedBlocks = await page
+        .locator(
+          ".hero-copy, .book-card, .detail-stage, .detail-copy, .contact-form, .biography-chapters, .author-figure, .author-copy, .about-opening h1, .about-opening figure",
+        )
+        .evaluateAll((elements) =>
+          elements.flatMap((element) => {
+            const rect = element.getBoundingClientRect();
+            return rect.left < -1 || rect.right > innerWidth + 1
+              ? [
+                  {
+                    element: element.className,
+                    left: rect.left,
+                    right: rect.right,
+                  },
+                ]
+              : [];
+          }),
+        );
+      expect(
+        clippedBlocks,
+        `${route} content stays inside the viewport`,
+      ).toEqual([]);
       await page.locator("img").evaluateAll((images) =>
         Promise.all(
           images.map((img) => {
@@ -104,12 +127,14 @@ for (const width of [320, 375, 768, 1024, 1440]) {
       ).toEqual([]);
       if ([375, 768, 1440].includes(width) && screenshotNames[route]) {
         await page.screenshot({
-          path: `docs/review/${screenshotNames[route]}-${width}.png`,
+          path: `docs/review/cinematic/${screenshotNames[route]}-${width}.png`,
           fullPage: true,
         });
       }
       if (route === "/" && width === 1440)
-        await page.screenshot({ path: "docs/review/home-hero-desktop.png" });
+        await page.screenshot({
+          path: "docs/review/cinematic/home-hero-desktop.png",
+        });
     }
     expect(errors).toEqual([]);
   });
@@ -273,9 +298,15 @@ test("Reduced motion, zoom reflow and screenshots", async ({ page }) => {
       .locator(".hero-copy")
       .evaluate((el) => getComputedStyle(el).animationName),
   ).toBe("none");
-  await page.screenshot({ path: "docs/home-desktop.png", fullPage: true });
+  await page.screenshot({
+    path: "docs/review/cinematic/home-full-desktop.png",
+    fullPage: true,
+  });
   await page.setViewportSize({ width: 375, height: 900 });
-  await page.screenshot({ path: "docs/home-mobile.png", fullPage: true });
+  await page.screenshot({
+    path: "docs/review/cinematic/home-full-mobile.png",
+    fullPage: true,
+  });
   await page.setViewportSize({ width: 320, height: 900 });
   expect(
     await page.evaluate(

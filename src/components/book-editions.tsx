@@ -10,6 +10,22 @@ export function BookEditions({ book }: { book: Book }) {
       aria-label="Book editions and purchasing options"
     >
       <Eyebrow>Choose your edition</Eyebrow>
+      {book.amazonEbook && (
+        <section
+          className="edition-option edition-amazon"
+          aria-labelledby={`${book.slug}-kindle`}
+        >
+          <div className="edition-option-heading">
+            <h2 id={`${book.slug}-kindle`}>Kindle ebook</h2>
+            <span className="availability">Available on Amazon</span>
+          </div>
+          <p>Read with Kindle devices and apps.</p>
+          <RetailerLink book={book} prominent />
+          <p className="edition-note">
+            Amazon handles pricing, payment and delivery.
+          </p>
+        </section>
+      )}
       <section
         className="edition-option"
         aria-labelledby={`${book.slug}-direct`}
@@ -31,22 +47,6 @@ export function BookEditions({ book }: { book: Book }) {
           <Arrow />
         </button>
       </section>
-      {book.amazonEbook && (
-        <section
-          className="edition-option"
-          aria-labelledby={`${book.slug}-kindle`}
-        >
-          <div className="edition-option-heading">
-            <h2 id={`${book.slug}-kindle`}>Kindle ebook</h2>
-            <span className="availability">Available on Amazon</span>
-          </div>
-          <p>Read with Kindle devices and apps.</p>
-          <RetailerLink book={book} prominent />
-          <p className="edition-note">
-            Amazon handles pricing, payment and delivery.
-          </p>
-        </section>
-      )}
       {book.formats.includes("Hardcover") && (
         <section
           className="edition-option"

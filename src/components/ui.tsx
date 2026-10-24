@@ -46,9 +46,11 @@ export function Eyebrow({ children }: { children: React.ReactNode }) {
 export function Portrait({
   className = "",
   priority = false,
+  sizes = "(max-width: 760px) 100vw, 55vw",
 }: {
   className?: string;
   priority?: boolean;
+  sizes?: string;
 }) {
   const available = existsSync(
     path.join(process.cwd(), "public/images/edmund-katso.jpg"),
@@ -60,8 +62,9 @@ export function Portrait({
           src="/images/edmund-katso.jpg"
           alt="Edmund Spencer Katso writing at a typewriter in his book-lined study"
           fill
-          priority={priority}
-          sizes="(max-width: 760px) 100vw, 55vw"
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : undefined}
+          sizes={sizes}
           className="portrait-photo"
         />
       ) : (
@@ -108,7 +111,8 @@ export function BookCover({
           alt={`${book.title}: ${book.subtitle}${book.series ? ` — ${book.series}` : ""}, original book cover`}
           fill
           sizes="(max-width: 600px) 65vw, (max-width: 1000px) 32vw, 300px"
-          priority={priority}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : undefined}
         />
       ) : (
         <div className="cover-pending">
@@ -120,16 +124,22 @@ export function BookCover({
     </div>
   );
 }
-export function BookCard({ book }: { book: Book }) {
+export function BookCard({
+  book,
+  priority = false,
+}: {
+  book: Book;
+  priority?: boolean;
+}) {
   return (
-    <article className="book-card">
+    <article className="book-card" data-reveal>
       <Link
         href={`/books/${book.slug}`}
         className={`book-stage ${book.tone}`}
         aria-label={`Explore ${book.title}${book.series ? `, ${book.series}` : ""}`}
       >
         <span className="stage-index">{book.number} / THE COLLECTION</span>
-        <BookCover book={book} />
+        <BookCover book={book} priority={priority} />
         <span className="stage-arrow">
           <Arrow diagonal />
         </span>

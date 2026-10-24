@@ -24,11 +24,14 @@ export default async function Home() {
     books.find((book) => book.slug === home.featured_book_slug) || books[0];
   return (
     <main id="main">
-      <section className="hero container" aria-labelledby="hero-title">
+      <section className="hero cinematic-hero" aria-labelledby="hero-title">
         <div className="hero-copy">
+          <span className="hero-edition">
+            THE LIVING ARCHIVE <span>HISTORY / MEMORY / LITERATURE</span>
+          </span>
           <Eyebrow>
             <span className="gold-line" />
-            Author. Educator. Historian.
+            Edmund Spencer Katso
           </Eyebrow>
           <h1 id="hero-title">
             {home.hero_first}
@@ -41,6 +44,7 @@ export default async function Home() {
               {home.hero_italic_second}
             </em>
           </h1>
+          <p className="hero-profession">Author. Educator. Historian.</p>
           <p className="hero-description">{home.hero_description}</p>
           <div className="hero-actions">
             <ButtonLink href="/books">Explore the books</ButtonLink>
@@ -52,7 +56,7 @@ export default async function Home() {
           </div>
         </div>
         <figure className="hero-figure">
-          <Portrait priority />
+          <Portrait priority sizes="(max-width: 760px) 100vw, 70vw" />
           <figcaption>
             <span>
               <span className="caption-line" />
@@ -60,10 +64,14 @@ export default async function Home() {
             </span>
             <span>At the intersection of history & memory</span>
           </figcaption>
-          <div className="portrait-side-note" aria-hidden="true">
-            THE AUTHOR, IN HIS ELEMENT
-          </div>
         </figure>
+        <a className="hero-scroll" href="#books-title">
+          <span>SCROLL TO EXPLORE</span>
+          <Arrow />
+        </a>
+        <span className="hero-coordinate" aria-hidden="true">
+          01 — A LIFE IN WORDS
+        </span>
       </section>
       <div className="archive-strip">
         <div className="container">
@@ -81,7 +89,7 @@ export default async function Home() {
         </div>
       </div>
       <section className="section container" aria-labelledby="books-title">
-        <div className="section-heading">
+        <div className="section-heading" data-reveal>
           <div>
             <Eyebrow>01 / The bookshelf</Eyebrow>
             <h2 id="books-title">
@@ -105,11 +113,11 @@ export default async function Home() {
       </section>
       <section className="author-section" aria-labelledby="author-title">
         <div className="container author-grid">
-          <figure className="author-figure">
+          <figure className="author-figure" data-reveal>
             <Portrait />
             <figcaption>EDMUND SPENCER KATSO / AUTHOR & EDUCATOR</figcaption>
           </figure>
-          <div className="author-copy">
+          <div className="author-copy" data-reveal>
             <Eyebrow>02 / Behind the words</Eyebrow>
             <h2 id="author-title">
               A life lived.
@@ -129,7 +137,7 @@ export default async function Home() {
         className="section container worlds-section"
         aria-labelledby="worlds-title"
       >
-        <div className="section-heading">
+        <div className="section-heading" data-reveal>
           <div>
             <Eyebrow>03 / Two literary worlds</Eyebrow>
             <h2 id="worlds-title">
@@ -154,6 +162,7 @@ export default async function Home() {
                 : "/books"
             }
             className="world-card"
+            data-reveal
           >
             <span className="world-number">I.</span>
             <div>
@@ -179,6 +188,7 @@ export default async function Home() {
                 : "/books"
             }
             className="world-card"
+            data-reveal
           >
             <span className="world-number">II.</span>
             <div>
@@ -201,7 +211,7 @@ export default async function Home() {
       {featured && (
         <section className="feature-section" aria-labelledby="feature-title">
           <div className="container feature-grid">
-            <div className="feature-copy">
+            <div className="feature-copy" data-reveal>
               <Eyebrow>In focus / {featured.category}</Eyebrow>
               <h2 id="feature-title">
                 {featured.slug === "the-bile-of-the-river" ? (
@@ -223,7 +233,7 @@ export default async function Home() {
                 {featured.formats.join(" & ").toUpperCase()} EDITIONS
               </span>
             </div>
-            <div className="feature-art">
+            <div className="feature-art" data-reveal>
               <div className="feature-orbit" aria-hidden="true" />
               <span className="feature-art-label">
                 A DIFFERENT WAY INTO THE PAST
@@ -236,7 +246,7 @@ export default async function Home() {
           </div>
         </section>
       )}
-      <section className="closing container">
+      <section className="closing container" data-reveal>
         <Eyebrow>The story continues</Eyebrow>
         <h2>
           There is always
