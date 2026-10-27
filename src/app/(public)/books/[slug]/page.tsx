@@ -103,7 +103,8 @@ export default async function BookPage({
               </h2>
             </div>
           </div>
-          <div className="book-grid related-grid">
+          <p className="books-row-hint">Scroll to explore more books →</p>
+          <div className="book-grid related-grid" role="region" aria-label="More books" tabIndex={0}>
             {books
               .filter((b) => b.slug !== slug)
               .map((b) => (

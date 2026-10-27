@@ -38,7 +38,8 @@ export default async function BooksPage() {
         className="container collection-section"
         aria-label="The book collection"
       >
-        <div className="book-grid">
+        <p className="books-row-hint">Scroll to explore all books →</p>
+        <div className="book-grid" role="region" aria-label="All books" tabIndex={0}>
           {books.map((book, index) => (
             <BookCard key={book.slug} book={book} priority={index === 0} />
           ))}

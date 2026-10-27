@@ -105,7 +105,8 @@ export default async function Home() {
             : `${books.length} published books`}
           , each opening a different door into the African experience.
         </p>
-        <div className="book-grid">
+        <p className="books-row-hint">Scroll to explore all books →</p>
+        <div className="book-grid" role="region" aria-label="Author’s bookshelf" tabIndex={0}>
           {books.map((book) => (
             <BookCard key={book.slug} book={book} />
           ))}

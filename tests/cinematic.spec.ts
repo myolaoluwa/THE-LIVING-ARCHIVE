@@ -69,6 +69,6 @@ test("Section links clear the sticky masthead and book navigation opens at the n
     .getByRole("link", { name: "View book", exact: true })
     .last()
     .click();
-  await expect(page).toHaveURL(/\/books\/the-bile-of-the-river$/);
+  await expect(page).toHaveURL(/\/books\/4daniel-book-three$/);
   await expect(page.locator(".detail-copy h1")).toBeInViewport();
 });

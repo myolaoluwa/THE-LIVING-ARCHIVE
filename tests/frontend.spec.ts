@@ -6,6 +6,7 @@ const routes = [
   "/books/4daniel-book-one",
   "/books/4daniel-book-two",
   "/books/the-bile-of-the-river",
+  "/books/4daniel-book-three",
   "/about",
   "/contact",
   "/privacy",
@@ -16,6 +17,7 @@ const screenshotNames: Record<string, string> = {
   "/books/4daniel-book-one": "book-one",
   "/books/4daniel-book-two": "book-two",
   "/books/the-bile-of-the-river": "the-bile-of-the-river",
+  "/books/4daniel-book-three": "book-three",
   "/about": "about",
   "/contact": "contact",
 };
@@ -59,6 +61,10 @@ for (const width of [320, 375, 768, 1024, 1440]) {
         )
         .evaluateAll((elements) =>
           elements.flatMap((element) => {
+            // Cards outside a deliberately scrollable shelf are reachable within
+            // its own viewport; they must not enlarge the document viewport.
+            const shelf = element.closest(".book-grid");
+            if (element.matches(".book-card") && shelf && getComputedStyle(shelf).overflowX === "auto") return [];
             const rect = element.getBoundingClientRect();
             return rect.left < -1 || rect.right > innerWidth + 1
               ? [

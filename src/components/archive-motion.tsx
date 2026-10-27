@@ -55,6 +55,18 @@ export function ArchiveMotion() {
     };
     const onFocus = (event: FocusEvent) => {
       if (event.target instanceof Element) {
+        const shelf = event.target.closest<HTMLElement>(".book-grid");
+        const card = event.target.closest(".book-card");
+        if (shelf && card && event.target.matches(":focus-visible")) {
+          // Native focus scrolling can leave a partially visible link clipped
+          // at a snap boundary. Adjust only horizontal keyboard scrolling;
+          // pointer clicks must not move their target before pointerup.
+          const bounds = shelf.getBoundingClientRect();
+          const target = event.target.getBoundingClientRect();
+          if (target.left < bounds.left || target.right > bounds.right) {
+            shelf.scrollLeft += card.getBoundingClientRect().left - bounds.left - 4;
+          }
+        }
         const parent = event.target.closest<HTMLElement>(
           '[data-revealed="pending"]',
         );

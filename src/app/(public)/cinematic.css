@@ -2074,3 +2074,70 @@
 .public-site .about-opening > * {
   min-width: 0;
 }
+
+/* A single bookshelf row; compact screens retain readable cards in a local scroller. */
+.public-site .book-grid {
+  contain: inline-size layout paint;
+  grid-template-columns: none;
+  grid-template-rows: auto;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 24px;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 4px;
+  padding: 4px 4px 22px;
+  scrollbar-width: thin;
+  scrollbar-color: #68766b #e8e2d7;
+}
+.public-site .book-grid:focus-visible {
+  outline: 2px solid #68766b;
+  outline-offset: 4px;
+}
+.public-site .book-grid > .book-card {
+  scroll-snap-align: start;
+}
+.public-site .book-grid .book-stage {
+  height: 350px;
+  padding: 45px 20px;
+}
+.public-site .book-grid .book-cover {
+  height: 240px;
+  max-width: 100%;
+}
+.public-site .book-grid .book-subtitle {
+  min-height: 0;
+}
+.public-site .books-row-hint {
+  display: none;
+}
+@media (max-width: 1100px) {
+  .public-site .book-grid {
+    grid-auto-columns: clamp(260px, 42vw, 340px);
+    gap: 24px;
+    margin-top: 20px;
+  }
+  .public-site .books-row-hint {
+    display: block;
+    margin-top: 28px;
+    color: #53584d;
+    font-size: 14px;
+  }
+}
+@media (max-width: 600px) {
+  .public-site .book-grid {
+    grid-auto-columns: min(82vw, 320px);
+    gap: 20px;
+  }
+  .public-site .book-grid .book-stage {
+    height: 365px;
+  }
+  .public-site .book-grid .book-card h3 {
+    font-size: 34px;
+  }
+  .public-site .book-grid .book-subtitle {
+    font-size: 23px;
+  }
+}
