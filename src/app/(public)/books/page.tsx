@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     "Discover 4Daniel Book One, 4Daniel Book Two and The Bile of the River by Edmund Spencer Katso.",
 };
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 export default async function BooksPage() {
   const books = await getPublicBooks();
   return (

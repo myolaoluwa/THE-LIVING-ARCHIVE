@@ -13,7 +13,7 @@ import {
   TextLink,
 } from "@/components/ui";
 import { Arrow, ArchiveMark } from "@/components/icons";
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 export default async function Home() {
   const [books, home, settings] = await Promise.all([
     getPublicBooks(),
@@ -114,7 +114,11 @@ export default async function Home() {
       <section className="author-section" aria-labelledby="author-title">
         <div className="container author-grid">
           <figure className="author-figure" data-reveal>
-            <Portrait />
+            <Portrait
+              variant="smiling"
+              className="portrait-smiling"
+              sizes="(max-width: 760px) 90vw, 40vw"
+            />
             <figcaption>EDMUND SPENCER KATSO / AUTHOR & EDUCATOR</figcaption>
           </figure>
           <div className="author-copy" data-reveal>

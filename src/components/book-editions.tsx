@@ -26,6 +26,31 @@ export function BookEditions({ book }: { book: Book }) {
           </p>
         </section>
       )}
+      {book.amazonPaperback && (
+        <section
+          className="edition-option"
+          aria-labelledby={`${book.slug}-paperback`}
+        >
+          <div className="edition-option-heading">
+            <h2 id={`${book.slug}-paperback`}>Paperback</h2>
+            <span className="availability">Available on Amazon</span>
+          </div>
+          <p>A printed edition to read and keep.</p>
+          <a
+            className="button retailer-button"
+            href={book.amazonPaperback}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Buy paperback on Amazon
+            <Arrow diagonal />
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
+          <p className="edition-note">
+            Amazon handles pricing, payment and delivery.
+          </p>
+        </section>
+      )}
       <section
         className="edition-option"
         aria-labelledby={`${book.slug}-direct`}

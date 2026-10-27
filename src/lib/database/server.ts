@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { databaseConfig } from "./config";
 
-export function publicDatabase() {
+export function publicDatabase({ cachePublished = false } = {}) {
   const config = databaseConfig();
   if (!config) return null;
   // Always anonymous, even when an administrator visits the public website.
@@ -15,7 +15,19 @@ export function publicDatabase() {
       detectSessionInUrl: false,
     },
     global: {
-      fetch: (url, options) => fetch(url, { ...options, cache: "no-store" }),
+      // Opt in only for anonymous, published editorial content. Storage access
+      // and existence checks still consult current RLS policies on every call.
+      fetch: (url, options) =>
+        fetch(
+          url,
+          cachePublished
+            ? {
+                ...options,
+                cache: "force-cache",
+                next: { revalidate: 60, tags: ["public-content"] },
+              }
+            : { ...options, cache: "no-store" },
+        ),
     },
   });
 }

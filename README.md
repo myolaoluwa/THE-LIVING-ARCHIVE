@@ -1,5 +1,7 @@
 # The Living Archive
 
+Current delivery mode: source-managed public website. Backend, admin, direct payments and ebook delivery are postponed. `BACKEND_ENABLED` defaults to disabled, even when Supabase keys are present. See [source-managed launch guide](docs/FRONTEND_LAUNCH.md).
+
 Edmund Spencer Katso’s author website, with a cinematic editorial frontend and Phase 3 database/admin implementation. Built with Next.js App Router, React, strict TypeScript and Supabase. Live payments and customer ebook delivery remain disabled.
 
 The Supabase project configuration has not been provided. Public pages continue using the approved local content until connected. `/admin/login` explains the missing setup; it does not simulate authentication or saved changes. When configured, public pages read published records anonymously and fail explicitly on database errors.

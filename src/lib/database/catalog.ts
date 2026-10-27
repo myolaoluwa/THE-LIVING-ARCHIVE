@@ -11,7 +11,7 @@ import {
 
 import { rowSchema, editionRow, catalogBook } from "./public-records";
 export const getPublicBooks = cache(async (): Promise<Book[]> => {
-  const db = publicDatabase();
+  const db = publicDatabase({ cachePublished: true });
   if (!db) return approvedBooks;
   const [books, editions, series, media] = await Promise.all([
     db
@@ -52,7 +52,7 @@ export const getPublicBooks = cache(async (): Promise<Book[]> => {
 export async function getPublicPage<K extends PageSlug>(
   slug: K,
 ): Promise<(typeof defaultPages)[K]> {
-  const db = publicDatabase();
+  const db = publicDatabase({ cachePublished: true });
   if (!db) return defaultPages[slug];
   const { data, error } = await db
     .from("pages")
@@ -64,7 +64,7 @@ export async function getPublicPage<K extends PageSlug>(
   return contentSchemas[slug].parse(data.content) as (typeof defaultPages)[K];
 }
 export async function getPublicSettings(): Promise<Record<string, string>> {
-  const db = publicDatabase();
+  const db = publicDatabase({ cachePublished: true });
   if (!db) return {};
   const { data, error } = await db.from("site_settings").select("key,value");
   if (error) throw new Error("Public settings are unavailable.");

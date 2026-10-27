@@ -47,20 +47,30 @@ export function Portrait({
   className = "",
   priority = false,
   sizes = "(max-width: 760px) 100vw, 55vw",
+  variant = "study",
 }: {
   className?: string;
   priority?: boolean;
   sizes?: string;
+  variant?: "study" | "smiling";
 }) {
+  const src =
+    variant === "smiling"
+      ? "/images/edmund-katso-smiling-enhanced.webp"
+      : "/images/edmund-katso-enhanced.webp";
   const available = existsSync(
-    path.join(process.cwd(), "public/images/edmund-katso-enhanced.webp"),
+    path.join(process.cwd(), "public", src),
   );
   return (
     <div className={`portrait ${className}`}>
       {available ? (
         <Image
-          src="/images/edmund-katso-enhanced.webp"
-          alt="Edmund Spencer Katso writing at a typewriter in his book-lined study"
+          src={src}
+          alt={
+            variant === "smiling"
+              ? "Edmund Spencer Katso smiling, wearing glasses and a checked shirt"
+              : "Edmund Spencer Katso writing at a typewriter in his book-lined study"
+          }
           fill
           quality={90}
           loading={priority ? "eager" : "lazy"}

@@ -2,6 +2,7 @@ export type Book = {
   id?: string;
   coverRatio?: string;
   amazonHardcover?: string;
+  amazonPaperback?: string;
   seoTitle?: string;
   seoDescription?: string;
   slug: string;
@@ -38,9 +39,10 @@ export const books: Book[] = [
       "It explores the Great Zimbabwe cultural heritage, Swahili trade and Portuguese involvement in the region, tracing a history that reaches beyond colonial accounts. The series began as a legacy for his son Daniel, who grew up in Germany.",
     ],
     themes: ["Precolonial Africa", "Cultural heritage", "Personal memory"],
-    formats: ["Ebook"],
+    formats: ["Ebook", "Paperback"],
     source: "https://www.goodreads.com/book/show/210820405-4daniel",
     amazonEbook: "https://www.amazon.com/dp/B0CZTYLFSG",
+    amazonPaperback: "https://www.amazon.com/dp/B0CYVNQJ4M",
   },
   {
     slug: "4daniel-book-two",
@@ -58,9 +60,10 @@ export const books: Book[] = [
       "Historical analysis is interwoven with memories of growing up in a segregated society and the experiences of early Black students at Peterhouse. Together, these perspectives consider the ways colonial systems shaped education, identity and everyday life.",
     ],
     themes: ["Colonial history", "Education & identity", "Lived experience"],
-    formats: ["Ebook"],
+    formats: ["Ebook", "Paperback"],
     source: "https://www.goodreads.com/book/show/240713691-book-two-4daniel",
     amazonEbook: "https://www.amazon.com/dp/B0FNX7L165",
+    amazonPaperback: "https://www.amazon.com/dp/B0FQP4FZ58",
   },
   {
     slug: "the-bile-of-the-river",
@@ -77,9 +80,10 @@ export const books: Book[] = [
       "Alongside the research and personal memory of the 4Daniel books, this standalone African saga explores history through fiction.",
     ],
     themes: ["Historical fiction", "African narratives", "Storytelling"],
-    formats: ["Ebook", "Hardcover"],
+    formats: ["Ebook", "Paperback", "Hardcover"],
     source: "https://www.goodreads.com/book/show/253569061-an-african-saga",
     amazonEbook: "https://www.amazon.com/dp/B0H4BTT1QH",
+    amazonPaperback: "https://www.amazon.com/dp/B0H4CRDM47",
   },
 ];
 

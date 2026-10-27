@@ -52,23 +52,22 @@ export default async function LoginPage() {
         ) : (
           <div className="admin-setup">
             <p>
-              Administration is not connected to Supabase yet. Sign-in, editing
-              and uploads remain unavailable until setup is complete.
+              Administration is paused. Website content and images are managed
+              in the project source and published through Vercel.
             </p>
             <ol>
               <li>
-                Add the project URL and publishable key to{" "}
-                <code>.env.local</code>.
+                Make website updates in the project and review them locally.
               </li>
-              <li>Apply the versioned migrations to your Supabase project.</li>
+              <li>Commit and push approved changes to GitHub.</li>
               <li>
-                Create the first owner account and enroll an authenticator.
+                Check the resulting Vercel deployment before sharing updates.
               </li>
             </ol>
             <p>
               No administrator data is displayed and no changes can be saved in
-              this state. Setup instructions are in{" "}
-              <code>docs/PHASE3_SETUP.md</code>.
+              this state. The current workflow is in{" "}
+              <code>docs/FRONTEND_LAUNCH.md</code>.
             </p>
           </div>
         )}

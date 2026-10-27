@@ -1,5 +1,7 @@
 # Phase 3 setup and administrator guide
 
+Backend implementation is currently postponed. The public website is source-managed. To resume this guide later, complete migrations and security setup before explicitly setting `BACKEND_ENABLED=true`. Supabase credentials alone no longer enable the backend.
+
 Implementation is local. No hosted Supabase project has been connected or migrated. The owner has elected to supply configuration later. This guide describes the remaining setup; it is not a record of completed remote operations.
 
 ## Connect a development project

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description:
     "Enquiries about Edmund Spencer Katso’s books, media interviews, academic conversations and book clubs.",
 };
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 export default async function ContactPage() {
   const [contact, settings] = await Promise.all([
     getPublicPage("contact"),
@@ -42,6 +42,11 @@ export default async function ContactPage() {
                 : contact.guidance}
             </p>
           </div>
+          {contactEmail && (
+            <a className="text-link" href={`mailto:${contactEmail}`}>
+              {contactEmail}
+            </a>
+          )}
         </aside>
         <ContactForm email={contactEmail} />
       </section>

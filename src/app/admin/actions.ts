@@ -1,5 +1,5 @@
 "use server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/session";
 import {
@@ -41,6 +41,7 @@ function fail(error: unknown): ActionState {
   };
 }
 function refreshPublic() {
+  updateTag("public-content");
   revalidatePath("/", "layout");
 }
 export async function saveBook(

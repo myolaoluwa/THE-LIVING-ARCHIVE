@@ -180,7 +180,7 @@ test("Navigation destinations and retailer edition links are valid", async ({
         elements.map((el) => el.getAttribute("href")),
       )) {
       expect(href).toMatch(
-        /^https:\/\/www\.amazon\.com\/dp\/(B0CZTYLFSG|B0FNX7L165|B0H4BTT1QH)$/,
+        /^https:\/\/www\.amazon\.com\/dp\/(B0CZTYLFSG|B0FNX7L165|B0H4BTT1QH|B0CYVNQJ4M|B0FQP4FZ58|B0H4CRDM47)$/,
       );
     }
     await expect(page.locator('a[href="#"], button:not([type])')).toHaveCount(
@@ -232,18 +232,25 @@ test("Book discovery and missing route work", async ({ page, request }) => {
 });
 test("Contact review does not pretend to send a message", async ({ page }) => {
   await page.goto("/contact");
-  await page.getByRole("button", { name: "Contact availability" }).click();
+  await expect(page.getByRole("link", { name: "edmund.katso@gmail.com" }))
+    .toHaveAttribute("href", "mailto:edmund.katso@gmail.com");
+  await page.getByLabel("Your name").fill("Website reviewer");
+  await page.getByLabel("Email address", { exact: true }).fill("review@example.com");
+  await page.getByLabel("Subject", { exact: true }).fill("Book enquiry");
+  await page.getByLabel("Your message").fill("I would like to learn more about your books.");
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Prepare email" }).click();
   await expect(page.getByRole("status")).toContainText(
-    "Nothing has been submitted or stored",
+    "this website has not sent it",
   );
 });
 test("Each book separates direct ebooks, Kindle and eligible hardcover options", async ({
   page,
 }) => {
   const editions = [
-    { slug: "4daniel-book-one", asin: "B0CZTYLFSG" },
-    { slug: "4daniel-book-two", asin: "B0FNX7L165" },
-    { slug: "the-bile-of-the-river", asin: "B0H4BTT1QH" },
+    { slug: "4daniel-book-one", asin: "B0CZTYLFSG", paperback: "B0CYVNQJ4M" },
+    { slug: "4daniel-book-two", asin: "B0FNX7L165", paperback: "B0FQP4FZ58" },
+    { slug: "the-bile-of-the-river", asin: "B0H4BTT1QH", paperback: "B0H4CRDM47" },
   ];
   for (const edition of editions) {
     await page.goto(`/books/${edition.slug}`);
@@ -264,6 +271,10 @@ test("Each book separates direct ebooks, Kindle and eligible hardcover options",
       name: "Hardcover",
       exact: true,
     });
+    await expect(
+      options.getByRole("region", { name: "Paperback", exact: true })
+        .getByRole("link", { name: /Buy paperback on Amazon/ }),
+    ).toHaveAttribute("href", `https://www.amazon.com/dp/${edition.paperback}`);
     if (edition.slug === "the-bile-of-the-river") {
       await expect(hardcover).toBeVisible();
       await expect(

@@ -649,6 +649,9 @@
 .public-site .author-figure .portrait-photo {
   object-position: 38% center;
 }
+.public-site .author-figure .portrait-smiling .portrait-photo {
+  object-position: 50% 52%;
+}
 .public-site .author-figure {
   padding: 0;
 }

@@ -5,7 +5,11 @@ import { getPublicBooks } from "@/lib/database/catalog";
 import { BookCard, BookCover, Eyebrow } from "@/components/ui";
 import { BookEditions } from "@/components/book-editions";
 import { ShareButton } from "@/components/share-button";
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
+// Render new published slugs on first visit, then reuse the ISR page cache.
+export async function generateStaticParams() {
+  return [];
+}
 export async function generateMetadata({
   params,
 }: {
