@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test("source-managed mode serves the catalog and keeps administration paused", async ({ page, request }) => {
   await page.goto("/books");
-  await expect(page.getByRole("link", { name: "View book", exact: true })).toHaveCount(3);
+  await expect(page.getByRole("link", { name: "View book", exact: true })).toHaveCount(4);
   await page.goto("/admin/login");
   await expect(page.getByText("Administration is paused.", { exact: false })).toBeVisible();
   await expect(page.locator('input[type="password"]')).toHaveCount(0);

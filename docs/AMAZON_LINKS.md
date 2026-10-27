@@ -7,6 +7,7 @@ Verified on 2026-10-27 by following each author-supplied short link and comparin
 | 4Daniel · Book One | https://a.co/d/05eoYa4M | https://www.amazon.com/dp/B0CZTYLFSG |
 | 4Daniel · Book Two | https://a.co/d/0d8sUHlx | https://www.amazon.com/dp/B0FNX7L165 |
 | The Bile of the River | https://a.co/d/04HKNBcJ | https://www.amazon.com/dp/B0H4BTT1QH |
+| 4Daniel · Book Three — The Shadow of the Beast | https://a.co/d/0hJs9nX1 | https://www.amazon.com/dp/B0GX2ZY8MF |
 
 All three destinations already match `src/lib/content.ts`. Keep the direct product URLs to avoid the short-link redirect and sharing parameters. The reusable RetailerLink component uses these URLs on book cards and detail pages.
 

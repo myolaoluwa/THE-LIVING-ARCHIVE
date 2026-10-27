@@ -4,7 +4,7 @@ import { BookCard, Eyebrow, TextLink } from "@/components/ui";
 export const metadata: Metadata = {
   title: "The Books",
   description:
-    "Discover 4Daniel Book One, 4Daniel Book Two and The Bile of the River by Edmund Spencer Katso.",
+    "Discover the three-volume 4Daniel series and The Bile of the River by Edmund Spencer Katso.",
 };
 export const revalidate = 60;
 export default async function BooksPage() {
@@ -46,9 +46,9 @@ export default async function BooksPage() {
         <div className="collection-note">
           <Eyebrow>A note on the series</Eyebrow>
           <p>
-            4Daniel is a planned trilogy. Book One and Book Two are presented
-            here alongside the standalone historical novel, The Bile of the
-            River.
+            The 4Daniel trilogy moves from precolonial history through colonial
+            rule to neocolonial Zimbabwe. All three volumes are presented here
+            alongside the standalone historical novel, The Bile of the River.
           </p>
         </div>
       </section>

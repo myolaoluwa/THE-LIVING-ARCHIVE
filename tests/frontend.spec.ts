@@ -180,7 +180,7 @@ test("Navigation destinations and retailer edition links are valid", async ({
         elements.map((el) => el.getAttribute("href")),
       )) {
       expect(href).toMatch(
-        /^https:\/\/www\.amazon\.com\/dp\/(B0CZTYLFSG|B0FNX7L165|B0H4BTT1QH|B0CYVNQJ4M|B0FQP4FZ58|B0H4CRDM47)$/,
+        /^https:\/\/www\.amazon\.com\/dp\/(B0CZTYLFSG|B0FNX7L165|B0H4BTT1QH|B0CYVNQJ4M|B0FQP4FZ58|B0H4CRDM47|B0GX2ZY8MF)$/,
       );
     }
     await expect(page.locator('a[href="#"], button:not([type])')).toHaveCount(

@@ -20,6 +20,12 @@ export function BookEditions({ book }: { book: Book }) {
             <span className="availability">Available on Amazon</span>
           </div>
           <p>Read with Kindle devices and apps.</p>
+          {book.kindleUnlimited && (
+            <p className="edition-note">
+              Also available to read with a Kindle Unlimited subscription.
+              Subscription required; this is separate from buying the ebook.
+            </p>
+          )}
           <RetailerLink book={book} prominent />
           <p className="edition-note">
             Amazon handles pricing, payment and delivery.
@@ -59,8 +65,22 @@ export function BookEditions({ book }: { book: Book }) {
           <h2 id={`${book.slug}-direct`}>Direct ebook</h2>
           <span className="availability">Not open yet</span>
         </div>
+        {book.ebookPrice && (
+          <p className="edition-price">
+            <span>Planned ebook price</span>
+            <strong>
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: book.ebookPrice.currency,
+              }).format(book.ebookPrice.amountMinor / 100)}
+              <small> USD</small>
+            </strong>
+          </p>
+        )}
         <p id={`${book.slug}-direct-note`}>
-          Direct ebook purchases from this website are not open yet.
+          {book.ebookPrice?.amountMinor === 0 && book.kindleUnlimited
+            ? "Website downloads are on hold while this title is in Kindle Unlimited. The displayed $0.00 is a temporary holding price, not a free download offer."
+            : "Direct ebook purchases from this website are not open yet."}
         </p>
         <button
           type="button"

@@ -3,6 +3,8 @@ export type Book = {
   coverRatio?: string;
   amazonHardcover?: string;
   amazonPaperback?: string;
+  ebookPrice?: { amountMinor: number; currency: "USD" };
+  kindleUnlimited?: boolean;
   seoTitle?: string;
   seoDescription?: string;
   slug: string;
@@ -43,6 +45,8 @@ export const books: Book[] = [
     source: "https://www.goodreads.com/book/show/210820405-4daniel",
     amazonEbook: "https://www.amazon.com/dp/B0CZTYLFSG",
     amazonPaperback: "https://www.amazon.com/dp/B0CYVNQJ4M",
+    ebookPrice: { amountMinor: 777, currency: "USD" },
+    kindleUnlimited: true,
   },
   {
     slug: "4daniel-book-two",
@@ -64,6 +68,8 @@ export const books: Book[] = [
     source: "https://www.goodreads.com/book/show/240713691-book-two-4daniel",
     amazonEbook: "https://www.amazon.com/dp/B0FNX7L165",
     amazonPaperback: "https://www.amazon.com/dp/B0FQP4FZ58",
+    ebookPrice: { amountMinor: 999, currency: "USD" },
+    kindleUnlimited: true,
   },
   {
     slug: "the-bile-of-the-river",
@@ -84,6 +90,32 @@ export const books: Book[] = [
     source: "https://www.goodreads.com/book/show/253569061-an-african-saga",
     amazonEbook: "https://www.amazon.com/dp/B0H4BTT1QH",
     amazonPaperback: "https://www.amazon.com/dp/B0H4CRDM47",
+    ebookPrice: { amountMinor: 693, currency: "USD" },
+    kindleUnlimited: true,
+  },
+  {
+    slug: "4daniel-book-three",
+    title: "The Shadow of the Beast",
+    number: "04",
+    series: "4Daniel · Book Three",
+    subtitle: "An African Neocolonial History",
+    category: "African history",
+    cover: "/images/4daniel-book-three.jpg",
+    coverRatio: "943 / 1500",
+    tone: "walnut",
+    description:
+      "The concluding volume of the 4Daniel trilogy examines Zimbabwe’s postcolonial history and the continuing influence of colonial structures.",
+    paragraphs: [
+      "In The Shadow of the Beast, Edmund Katso turns to neocolonial history, completing the 4Daniel trilogy’s passage from precolonial roots through colonial rule to independent Zimbabwe.",
+      "The book considers the transition from Rhodesia to Zimbabwe, tracing the author’s argument about enduring connections between political power, security institutions and resource extraction.",
+    ],
+    themes: ["Neocolonial history", "Independent Zimbabwe", "Power & resources"],
+    formats: ["Ebook"],
+    source: "https://www.amazon.co.uk/dp/B0GX2ZY8MF",
+    amazonEbook: "https://www.amazon.com/dp/B0GX2ZY8MF",
+    // Owner-requested holding price, not a free website download offer.
+    ebookPrice: { amountMinor: 0, currency: "USD" },
+    kindleUnlimited: true,
   },
 ];
 
