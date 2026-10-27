@@ -14,6 +14,10 @@ export function ContactForm({ email }: { email: string }) {
   return (
     <form
       className="contact-form"
+      action={`mailto:${email}`}
+      method="post"
+      encType="text/plain"
+      aria-describedby="contact-draft-notice"
       onSubmit={(event) => {
         event.preventDefault();
         if (!email) {
@@ -33,6 +37,11 @@ export function ContactForm({ email }: { email: string }) {
         );
       }}
     >
+      <p id="contact-draft-notice" className="form-help">
+        This form opens a draft in your email app. Your details are not submitted
+        to this website; review and send the email yourself. An enquiry does not
+        subscribe you to a newsletter.
+      </p>
       {!email && (
         <div className="form-notice">
           <strong>Contact details coming soon</strong>
@@ -92,7 +101,7 @@ export function ContactForm({ email }: { email: string }) {
         placeholder="I’d like to get in touch about…"
       />
       <label className="checkbox-label">
-        <input type="checkbox" name="consent" required />
+        <input type="checkbox" name="privacy_acknowledgement" required />
         <span>
           I have read the <a href="/privacy">site privacy information</a> and
           understand how this enquiry will be handled.

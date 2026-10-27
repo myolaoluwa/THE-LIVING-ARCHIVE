@@ -2076,6 +2076,16 @@
 }
 
 /* A single bookshelf row; compact screens retain readable cards in a local scroller. */
+.public-site .legal-page .reading-copy a {
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.public-site .privacy-updated {
+  margin-bottom: 28px;
+  font-size: 14px;
+  color: #53584d;
+}
 .public-site .book-grid {
   contain: inline-size layout paint;
   grid-template-columns: none;
