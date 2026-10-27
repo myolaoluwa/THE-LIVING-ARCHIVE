@@ -656,7 +656,7 @@
   position: absolute;
   z-index: -2;
   inset: 0 0 0 35%;
-  background: url("/images/edmund-katso.jpg") 40% center / cover no-repeat;
+  background: url("/images/edmund-katso-enhanced.webp") 40% center / cover no-repeat;
 }
 .admin-auth::after {
   content: "";

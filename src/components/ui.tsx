@@ -53,15 +53,16 @@ export function Portrait({
   sizes?: string;
 }) {
   const available = existsSync(
-    path.join(process.cwd(), "public/images/edmund-katso.jpg"),
+    path.join(process.cwd(), "public/images/edmund-katso-enhanced.webp"),
   );
   return (
     <div className={`portrait ${className}`}>
       {available ? (
         <Image
-          src="/images/edmund-katso.jpg"
+          src="/images/edmund-katso-enhanced.webp"
           alt="Edmund Spencer Katso writing at a typewriter in his book-lined study"
           fill
+          quality={90}
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : undefined}
           sizes={sizes}
@@ -91,12 +92,14 @@ export function BookCover({
     book.cover.startsWith("/media/covers/") ||
     book.cover.startsWith("/api/admin/covers/") ||
     existsSync(path.join(process.cwd(), "public", book.cover));
+  // This original asset includes black side borders outside the cover artwork.
+  const cropBookTwoBorders = book.cover === "/images/4daniel-book-two.jpg";
   return (
     <div
       className={`book-cover ${book.tone}`}
       style={{
         aspectRatio:
-          book.coverRatio ||
+          (cropBookTwoBorders ? "332 / 500" : book.coverRatio) ||
           (book.slug === "4daniel-book-two"
             ? "400 / 500"
             : book.slug === "4daniel-book-one"
@@ -110,6 +113,11 @@ export function BookCover({
           unoptimized={book.cover.startsWith("/api/admin/")}
           alt={`${book.title}: ${book.subtitle}${book.series ? ` — ${book.series}` : ""}, original book cover`}
           fill
+          style={
+            cropBookTwoBorders
+              ? { objectFit: "cover", objectPosition: "55% center" }
+              : undefined
+          }
           sizes="(max-width: 600px) 65vw, (max-width: 1000px) 32vw, 300px"
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : undefined}

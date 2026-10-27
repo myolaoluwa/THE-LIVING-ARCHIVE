@@ -91,7 +91,7 @@ export default async function Home() {
       <section className="section container" aria-labelledby="books-title">
         <div className="section-heading" data-reveal>
           <div>
-            <Eyebrow>01 / The bookshelf</Eyebrow>
+            <Eyebrow>02 / The bookshelf</Eyebrow>
             <h2 id="books-title">
               A past worth <em>turning to.</em>
             </h2>
