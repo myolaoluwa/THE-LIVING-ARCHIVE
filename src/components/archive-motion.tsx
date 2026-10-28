@@ -8,6 +8,20 @@ export function ArchiveMotion() {
   const pathname = usePathname();
 
   useEffect(() => {
+    const navigation = performance.getEntriesByType("navigation")[0] as
+      | PerformanceNavigationTiming
+      | undefined;
+    if (window.location.pathname !== "/" || navigation?.type !== "reload") return;
+
+    // Only a full homepage refresh resets the reading position. Keep the
+    // browser's normal history restoration and initial anchor navigation.
+    const reset = () => window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    reset();
+    const frame = requestAnimationFrame(reset);
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
     const root = document.querySelector<HTMLElement>(".public-site");
     if (!root) return;
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");

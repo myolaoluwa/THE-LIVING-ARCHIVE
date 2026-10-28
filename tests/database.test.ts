@@ -482,8 +482,14 @@ test("real published PostgreSQL records render the confirmed catalog and keep ch
     assert.ok(markup.includes('disabled=""'));
     assert.equal(
       markup.includes("Buy hardcover on Amazon"),
-      row.slug === "the-bile-of-the-river",
+      ["4daniel-book-one", "4daniel-book-two"].includes(row.slug),
     );
+    assert.equal(book.formats.includes("Hardcover"), ["4daniel-book-one", "4daniel-book-two"].includes(row.slug));
+    if (row.slug === "4daniel-book-one") {
+      assert.equal(book.amazonHardcover, "https://www.amazon.com/dp/B0D1K2PS2B");
+    } else if (row.slug === "4daniel-book-two") {
+      assert.equal(book.amazonHardcover, "https://www.amazon.com/dp/B0GMTWWVWF");
+    } else assert.equal(book.amazonHardcover, undefined);
     assert.ok(!markup.includes("/checkout"));
   }
 });

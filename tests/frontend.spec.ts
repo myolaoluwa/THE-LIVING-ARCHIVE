@@ -279,12 +279,11 @@ test("Each book offers direct ebooks and retains eligible Amazon print options",
       options.getByRole("region", { name: "Paperback", exact: true })
         .getByRole("link", { name: /Buy paperback on Amazon/ }),
     ).toHaveAttribute("href", `https://www.amazon.com/dp/${edition.paperback}`);
-    if (edition.slug === "the-bile-of-the-river") {
-      await expect(hardcover).toBeVisible();
-      await expect(
-        hardcover.getByRole("button", { name: "Buy hardcover on Amazon" }),
-      ).toBeDisabled();
-      await expect(hardcover.getByRole("link")).toHaveCount(0);
+    if (edition.slug === "4daniel-book-one" || edition.slug === "4daniel-book-two") {
+      const hardcoverAsin = edition.slug === "4daniel-book-one" ? "B0D1K2PS2B" : "B0GMTWWVWF";
+      await expect(hardcover.getByRole("link", { name: /Buy hardcover on Amazon/ }))
+        .toHaveAttribute("href", `https://www.amazon.com/dp/${hardcoverAsin}`);
+      await expect(hardcover.getByRole("button")).toHaveCount(0);
     } else await expect(hardcover).toHaveCount(0);
     await expect(
       page.locator('a[href*="checkout"], a[href*="cart"], input[name*="card"]'),

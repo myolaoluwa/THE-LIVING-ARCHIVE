@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { approvedHardcoverUrl } from "../approved-editions";
 import type { Book } from "@/lib/content";
 export const rowSchema = z.object({
   seo_title: z.string().optional(),
@@ -50,6 +51,7 @@ export function catalogBook(
         e.availability === "available" &&
         e.link_verified,
     )?.external_purchase_url || "";
+  const hardcover = approvedHardcoverUrl(row.slug);
   const direct = editions.find((e) => e.book_id === row.id && e.format === "ebook" && e.sale_channel === "direct");
   return {
     seoTitle: row.seo_title || undefined,
@@ -76,7 +78,7 @@ export function catalogBook(
     formats: [
       ...new Set(
         editions
-          .filter((e) => e.book_id === row.id)
+          .filter((e) => e.book_id === row.id && e.format !== "hardcover")
           .map((e) =>
             e.format === "ebook"
               ? "Ebook"
@@ -85,9 +87,10 @@ export function catalogBook(
                 : "Paperback",
           ),
       ),
+      ...(hardcover ? ["Hardcover"] : []),
     ],
     amazonEbook: available("ebook"),
-    amazonHardcover: available("hardcover"),
+    amazonHardcover: hardcover,
     amazonPaperback: available("paperback"),
     ebookPrice: direct?.price_minor != null && direct.currency === "USD"
       ? { amountMinor: direct.price_minor, currency: "USD" }

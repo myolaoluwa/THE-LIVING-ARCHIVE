@@ -16,6 +16,8 @@ for (const width of [375, 1440]) {
     await expect(cards.last()).toHaveAttribute("data-revealed", "true");
     await expect(cards.last()).toHaveCSS("opacity", "1");
     await page.reload();
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+    await expect(page.locator(".hero")).toBeInViewport();
     await expect(cards.first()).toHaveAttribute("data-revealed", /pending|true/);
     await shelf.evaluate((element) => { element.scrollLeft = 0; });
     await shelf.scrollIntoViewIfNeeded();
@@ -34,4 +36,17 @@ test("Reduced motion keeps the complete bookshelf immediately visible", async ({
     await expect(card).toHaveCSS("opacity", "1");
     expect(await card.evaluate((element) => element.getAnimations().length)).toBe(0);
   }
+});
+
+test("normal scrolling and browser history retain the homepage reading position", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await page.locator(".author-copy").scrollIntoViewIfNeeded();
+  const readingPosition = await page.evaluate(() => window.scrollY);
+  expect(readingPosition).toBeGreaterThan(0);
+  await page.locator(".author-copy").getByRole("link", { name: "Read Edmund’s story" }).click();
+  await expect(page).toHaveURL(/\/about$/);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/$/);
+  await expect.poll(async () => Math.abs(await page.evaluate(() => window.scrollY) - readingPosition)).toBeLessThan(10);
 });
