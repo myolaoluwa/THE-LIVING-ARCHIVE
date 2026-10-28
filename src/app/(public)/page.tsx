@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { authorSubstackNote } from "@/lib/author-links";
+import { SubstackLink } from "@/components/substack-link";
 import {
   getPublicBooks,
   getPublicPage,
@@ -107,7 +107,7 @@ export default async function Home() {
           , each opening a different door into the African experience.
         </p>
         <p className="books-row-hint">Scroll to explore all books →</p>
-        <div className="book-grid" role="region" aria-label="Author’s bookshelf" tabIndex={0}>
+        <div className="book-grid" data-bookshelf-entrance role="region" aria-label="Author’s bookshelf" tabIndex={0}>
           {books.map((book) => (
             <BookCard key={book.slug} book={book} />
           ))}
@@ -134,9 +134,9 @@ export default async function Home() {
             <p>{home.author_note}</p>
             <TextLink href="/about">Read Edmund’s story</TextLink>
             <p>
-              <a className="text-link" href={authorSubstackNote}>
-                Read Edmund’s note on Substack <Arrow diagonal />
-              </a>
+              <SubstackLink className="text-link">
+                Read Edmund’s note on Substack
+              </SubstackLink>
             </p>
             <div className="author-signature">
               Edmund Spencer Katso<span>AUTHOR · EDUCATOR · HISTORIAN</span>

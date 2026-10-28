@@ -13,21 +13,42 @@ export function ArchiveMotion() {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     let observer: IntersectionObserver | undefined;
     let frame = 0;
+    const bookshelfCards = Array.from(
+      root.querySelectorAll<HTMLElement>("[data-bookshelf-entrance] > .book-card"),
+    );
+    const entrances = new Map<HTMLElement, Animation>();
     const targets = Array.from(
       root.querySelectorAll<HTMLElement>("[data-reveal]"),
     );
-    const show = (element: HTMLElement) => {
+    const show = (element: HTMLElement, animate = false) => {
+      const wasPending = element.dataset.revealed === "pending";
       element.dataset.revealed = "true";
+      entrances.get(element)?.cancel();
+      if (animate && wasPending && bookshelfCards.includes(element) && !preference.matches) {
+        const animation = element.animate(
+          [
+            { opacity: 0, transform: "perspective(1000px) translateY(56px) rotateX(7deg) scale(0.94)" },
+            { opacity: 1, transform: "perspective(1000px) translateY(0) rotateX(0deg) scale(1)" },
+          ],
+          {
+            duration: 1100,
+            delay: Math.min(bookshelfCards.indexOf(element), 3) * 140,
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+            fill: "backwards",
+          },
+        );
+        entrances.set(element, animation);
+      }
     };
     const configure = () => {
       observer?.disconnect();
-      targets.forEach(show);
+      targets.forEach((target) => show(target));
       if (preference.matches || !("IntersectionObserver" in window)) return;
       observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              show(entry.target as HTMLElement);
+              show(entry.target as HTMLElement, true);
               observer?.unobserve(entry.target);
             }
           });
@@ -35,7 +56,9 @@ export function ArchiveMotion() {
         { threshold: 0.08, rootMargin: "0px 0px -32px 0px" },
       );
       targets.forEach((target) => {
-        if (target.getBoundingClientRect().top > window.innerHeight - 32) {
+        // Observe the bookshelf even when already visible after arrival or refresh.
+        // IntersectionObserver also waits for horizontally scrolled mobile cards.
+        if (bookshelfCards.includes(target) || target.getBoundingClientRect().top > window.innerHeight - 32) {
           target.dataset.revealed = "pending";
           observer?.observe(target);
         }
@@ -85,7 +108,8 @@ export function ArchiveMotion() {
     return () => {
       observer?.disconnect();
       cancelAnimationFrame(frame);
-      targets.forEach(show);
+      targets.forEach((target) => show(target));
+      entrances.forEach((animation) => animation.cancel());
       preference.removeEventListener("change", configure);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);

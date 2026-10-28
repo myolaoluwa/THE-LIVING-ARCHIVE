@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { authorSubstackNote } from "@/lib/author-links";
+import { SubstackLink } from "./substack-link";
 import { ArchiveMark, Arrow } from "./icons";
 import { getPublicSettings } from "@/lib/database/catalog";
 export async function Footer() {
@@ -45,10 +45,7 @@ export async function Footer() {
               Get in touch
               <Arrow diagonal />
             </Link>
-            <a href={authorSubstackNote}>
-              Edmund’s Substack note
-              <Arrow diagonal />
-            </a>
+            <SubstackLink>Substack</SubstackLink>
           </nav>
           <div className="footer-note">
             <span className="eyebrow">A place for stories</span>
