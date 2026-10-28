@@ -1,8 +1,11 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { SaleBook } from "@/lib/commerce/validation";
+import { books as bookDetails } from "@/lib/content";
+import { PurchaseSteps } from "./purchase-steps";
 
 export function readCart(): string[] {
   try {
@@ -155,13 +158,25 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
     }
   }
   return (
+    <>
+    <PurchaseSteps current={checkout ? 2 : 1} />
+    {enabled && testMode && (
+      <aside className="commerce-test-banner" aria-label="Test checkout notice">
+        <span className="commerce-notice-symbol" aria-hidden="true">!</span>
+        <div><strong>Test checkout — no real payment will be collected.</strong>
+        <p>This preview is for the configured test buyer only. Real purchases are not open yet.</p></div>
+        <span className="commerce-pill">Test mode</span>
+      </aside>
+    )}
     <div className="commerce-grid" aria-busy={!ready}>
       <section className="commerce-panel" aria-labelledby="selected-ebooks">
-        <h2 id="selected-ebooks">Your selected ebooks</h2>
+        <div className="commerce-panel-heading"><div><span className="commerce-kicker">A shelf of your own</span>
+        <h2 id="selected-ebooks">Your selected ebooks</h2></div>
+        {ready && <span className="commerce-count">{slugs.length} {slugs.length === 1 ? "ebook" : "ebooks"}</span>}</div>
         {!ready ? (
           <p role="status">Checking availability…</p>
         ) : slugs.length === 0 ? (
-          <p>
+          <p className="commerce-empty">
             Your reading list is empty. Explore the books to choose an available
             ebook.
           </p>
@@ -169,13 +184,15 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
           <ul className="commerce-items">
             {slugs.map((slug) => {
               const book = catalog.find((item) => item.slug === slug);
+              const detail = bookDetails.find((item) => item.slug === slug);
               return (
-                <li key={slug}>
-                  <div>
+                <li key={slug} className={!book ? "commerce-item-unavailable" : undefined}>
+                  {detail && <Image className="commerce-book-cover" src={detail.cover} alt="" width={72} height={108} loading="eager" />}
+                  <div className="commerce-book-details">
                     <Link href={`/books/${slug}`}>
                       {book?.title || slug.replaceAll("-", " ")}
                     </Link>
-                    <p>{book ? "Digital ebook" : "Currently unavailable"}</p>
+                    <p className={!book ? "commerce-item-warning" : undefined}>{book ? "PDF ebook · Private download" : "Unavailable — remove to continue"}</p>
                   </div>
                   <div>
                     {book && (
@@ -205,16 +222,12 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
         className="commerce-panel commerce-summary"
         aria-labelledby="order-summary"
       >
+        <span className="commerce-kicker">{checkout ? "One step closer" : "Ready for your next chapter?"}</span>
         <h2 id="order-summary">
           {checkout ? "Complete your order" : "Your order"}
         </h2>
-        {enabled && testMode && (
-          <p className="commerce-notice">
-            Test checkout — no real payment will be collected.
-          </p>
-        )}
         {!enabled && ready && (
-          <p className="commerce-notice">
+          <p className="commerce-notice commerce-warning">
             Direct purchases are not open yet. Please check back soon.
           </p>
         )}
@@ -230,14 +243,14 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
             </strong>
           </p>
         )}
-        <p>
+        <p className="commerce-tax-note">
           Any applicable tax and the final total are shown securely in Stripe
           Checkout before payment.
         </p>
-        <p>
+        <div className="commerce-delivery-note"><span aria-hidden="true">↓</span><p>
           Reviewed ebooks are delivered as private downloads after payment
           confirmation. No shipping is required.
-        </p>
+        </p></div>
         {checkout ? (
           <form onSubmit={pay} className="commerce-form">
             <label htmlFor="purchase-email">Email address</label>
@@ -250,7 +263,9 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={busy}
+              aria-describedby="purchase-email-help"
             />
+            <p className="commerce-field-help" id="purchase-email-help">Use an email you can access. It identifies your purchase and helps restore download access.</p>
             <label className="commerce-consent">
               <input
                 type="checkbox"
@@ -266,6 +281,7 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
                 that this purchase is a digital ebook.
               </span>
             </label>
+            {canCheckout && !terms && <p className="commerce-action-hint">Select the acknowledgement above to continue.</p>}
             <button
               className="button"
               type="submit"
@@ -286,19 +302,20 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
           </button>
         )}
         {message && (
-          <p role="status" className="commerce-message">
+          <p role="status" className="commerce-message commerce-warning">
             {message}
           </p>
         )}
         {currencies.size > 1 && (
-          <p role="status">
+          <p role="status" className="commerce-message commerce-warning">
             Please purchase ebooks in different currencies separately.
           </p>
         )}
-        <p className="edition-note">
-          Card details are entered on Stripe’s secure page.
+        <p className="edition-note commerce-security-note">
+          <span aria-hidden="true">↗</span> Secure payment on Stripe. Your card details stay on Stripe’s payment page.
         </p>
       </section>
     </div>
+    </>
   );
 }

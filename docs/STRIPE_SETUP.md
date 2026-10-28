@@ -1,10 +1,10 @@
 # Stripe Checkout setup
 
-The implementation is prepared locally. Live payments and email are OFF by default. Never paste secret keys into chat, commit them, or put them in `NEXT_PUBLIC_*` variables. Hosted Stripe end-to-end acceptance is not complete.
+Books One and Two are deployed with test checkout enabled for the configured test buyer only. Live payments and email are OFF. Never paste secret keys into chat, commit them, or put them in `NEXT_PUBLIC_*` variables. Hosted Stripe end-to-end acceptance is not complete.
 
 ## Start here
 
-Project status, verified 28 October 2026: the Supabase secret is configured, the combined checkout SQL is installed, and three PDFs are privately uploaded pending review. Do not rerun the checkout SQL. The Stripe test key is now authenticated and the production-domain test webhook is registered but disabled pending deployment. Its signing secret is saved locally. The matching Vercel Production variables are saved with commerce and live payments disabled and the public HTTPS site URL. Next deploy the checkout code, then enable that existing webhook when test checkout is ready; do not create a duplicate endpoint.
+Project status, verified 28 October 2026: the Supabase secret is configured, the combined checkout SQL is installed, and three PDFs are privately uploaded pending review. Do not rerun the checkout SQL. The Stripe test key is authenticated, the production-domain test webhook is enabled, and the matching Vercel Production settings are deployed. Commerce is enabled in test mode only; live payments remain disabled. Books One and Two are ready and available following recorded author approval and file verification. Mobile and desktop button-to-checkout checks passed; the hosted test session was expired without payment. Do not rerun setup or create a duplicate webhook.
 
 1. Open the author's Stripe account in **test mode / sandbox**. In its API keys area, copy the **test secret key** (`sk_test_...`) into `STRIPE_SECRET_KEY` in ignored `.env.local`. A Stripe publishable key is not required for this hosted Checkout integration.
 2. `SUPABASE_SECRET_KEY` must contain the project's Supabase secret key (`sb_secret_...`) or legacy service-role key. This is separate from the public publishable key. The existing public URL and key stay unchanged.

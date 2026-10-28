@@ -14,7 +14,7 @@ export default function CancelPage() {
       </h1>
       <section className="commerce-panel">
         <h2>Checkout was closed.</h2>
-        <p>
+        <p className="commerce-notice commerce-warning">
           Returning here does not confirm or cancel a payment. If you already
           submitted payment, use the purchase confirmation or contact the author
           before paying again.

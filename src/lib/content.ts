@@ -116,8 +116,8 @@ export const books: Book[] = [
     formats: ["Ebook"],
     source: "https://www.amazon.co.uk/dp/B0GX2ZY8MF",
     amazonEbook: "https://www.amazon.com/dp/B0GX2ZY8MF",
-    // Owner-requested holding price, not a free website download offer.
-    ebookPrice: { amountMinor: 0, currency: "USD" },
+    // Owner-approved selling price confirmed on 2026-10-28.
+    ebookPrice: { amountMinor: 500, currency: "USD" },
     kindleUnlimited: false,
   },
 ];

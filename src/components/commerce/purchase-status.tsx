@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { formatPrice, readCart, saveCart } from "./cart";
+import { PurchaseSteps } from "./purchase-steps";
 type Status = {
   id: string;
   reference: string;
@@ -86,23 +87,24 @@ export function PurchaseStatus() {
       clearTimeout(timer);
     };
   }, [session, retry]);
+  const confirmed = order?.payment_status === "paid" && !order.access_revoked;
   return (
-    <section className="commerce-panel">
+    <>
+    <PurchaseSteps current={3} />
+    <section className="commerce-panel commerce-status-panel">
+      <span className="commerce-kicker">{confirmed ? "Welcome to your reading shelf" : "Your purchase status"}</span>
       <h2>
         {order?.payment_status === "paid" && !order.access_revoked
           ? "Your books are ready."
           : "Purchase confirmation"}
       </h2>
-      <p role="status">{message}</p>
+      <p role="status" className={`commerce-message ${confirmed ? "commerce-success" : "commerce-warning"}`}><span aria-hidden="true">{confirmed ? "✓ " : "! "}</span>{message}</p>
       {order && (
         <>
-          <p>
-            Order reference: <strong>{order.reference}</strong>
-          </p>
-          <p>
-            Total: {formatPrice(order.total_minor, order.currency)}{" "}
-            {order.currency}
-          </p>
+          <dl className="commerce-order-details">
+            <div><dt>Order reference</dt><dd>{order.reference}</dd></div>
+            <div><dt>Order total</dt><dd>{formatPrice(order.total_minor, order.currency)} {order.currency}</dd></div>
+          </dl>
         </>
       )}
       {order && order.downloads.length > 0 && (
@@ -137,5 +139,6 @@ export function PurchaseStatus() {
         </Link>
       </div>
     </section>
+    </>
   );
 }

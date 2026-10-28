@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 export function RecoverPurchase() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [failed, setFailed] = useState(false);
   const [busy, setBusy] = useState(false);
   const token = useRef("");
   const [hasToken, setHasToken] = useState(false);
@@ -26,6 +27,7 @@ export function RecoverPurchase() {
     if (busy) return;
     setBusy(true);
     setMessage("");
+    setFailed(false);
     try {
       const r = await fetch(
         hasToken ? "/api/order/access" : "/api/order/recover",
@@ -48,6 +50,7 @@ export function RecoverPurchase() {
         location.assign(data.url);
       } else setMessage(data.message);
     } catch (error) {
+      setFailed(true);
       setMessage(
         error instanceof Error ? error.message : "Please try again later.",
       );
@@ -87,7 +90,7 @@ export function RecoverPurchase() {
               : "Send an access link"}
         </button>
       </form>
-      {message && <p role="status">{message}</p>}
+      {message && <p role="status" className={`commerce-message ${failed ? "commerce-warning" : "commerce-success"}`}>{message}</p>}
     </section>
   );
 }
