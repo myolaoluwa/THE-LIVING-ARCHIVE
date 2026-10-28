@@ -4,6 +4,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { Arrow } from "./icons";
 import type { Book } from "@/lib/content";
+import { bookDisplayTitle } from "@/lib/book-display";
 
 export function TextLink({
   href,
@@ -121,7 +122,7 @@ export function BookCover({
         <Image
           src={book.cover}
           unoptimized={book.cover.startsWith("/api/admin/")}
-          alt={`${book.title}: ${book.subtitle}${book.series ? ` — ${book.series}` : ""}, original book cover`}
+          alt={`${bookDisplayTitle(book)}${book.subtitle !== bookDisplayTitle(book) ? `: ${book.subtitle}` : ""}, original book cover`}
           fill
           style={
             cropBookTwoBorders
@@ -149,12 +150,7 @@ export function BookCard({
   book: Book;
   priority?: boolean;
 }) {
-  const listingTitle =
-    book.slug === "4daniel-book-one"
-      ? "A Precolonial History and My Life History in Rhodesia and Zimbabwe"
-      : book.slug === "4daniel-book-two"
-        ? "An African Colonial History and Memoir"
-        : book.title;
+  const listingTitle = bookDisplayTitle(book);
   const promotedSubtitle = listingTitle === book.subtitle;
   return (
     <article className="book-card" data-reveal>

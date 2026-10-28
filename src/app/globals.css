@@ -3355,3 +3355,15 @@ body {
     text-decoration: underline;
   }
 }
+
+/* Full approved titles need a different scale from short book titles. */
+.public-site .detail-copy h1.detail-title-long {
+  font-size: clamp(32px, 3.4vw, 54px);
+  line-height: 1.12;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.public-site .breadcrumb { flex-wrap: wrap; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .public-site .detail-copy h1.detail-title-long { font-size: clamp(30px, 8vw, 40px); }
+}

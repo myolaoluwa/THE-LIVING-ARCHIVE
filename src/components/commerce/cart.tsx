@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import type { SaleBook } from "@/lib/commerce/validation";
 import { books as bookDetails } from "@/lib/content";
 import { PurchaseSteps } from "./purchase-steps";
+import { PaymentSecurityNotice } from "./payment-security-notice";
 
 export function readCart(): string[] {
   try {
@@ -110,6 +111,19 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
     selected.length > 0 &&
     unavailable.length === 0 &&
     currencies.size === 1;
+  const suggestions = enabled && selected.length > 0 && unavailable.length === 0 && currencies.size === 1
+    ? catalog.filter((book) => !slugs.includes(book.slug) && book.currency === selected[0].currency).slice(0, 2)
+    : [];
+  function addBook(slug: string) {
+    if (busy || inFlight.current || slugs.length >= 4 || slugs.includes(slug)) return;
+    if (!suggestions.some((book) => book.slug === slug)) return;
+    const next = [...slugs, slug];
+    setSlugs(next);
+    saveCart(next);
+    attempt.current = null;
+    setTerms(false);
+    setMessage("");
+  }
   function remove(slug: string) {
     const next = slugs.filter((s) => s !== slug);
     setSlugs(next);
@@ -204,6 +218,7 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
                       type="button"
                       className="text-link"
                       onClick={() => remove(slug)}
+                      disabled={busy}
                       aria-label={`Remove ${book?.title || slug}`}
                     >
                       Remove
@@ -213,6 +228,30 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
               );
             })}
           </ul>
+        )}
+        {suggestions.length > 0 && slugs.length < 4 && (
+          <aside className="commerce-recommendations" aria-labelledby="add-another-book">
+            <span className="commerce-kicker">More stories to discover</span>
+            <h3 id="add-another-book">Add another chapter.</h3>
+            <p className="commerce-recommendations-intro">An optional addition to your reading shelf. Add only the books you’d like.</p>
+            <ul>
+              {suggestions.map((book) => {
+                const detail = bookDetails.find((item) => item.slug === book.slug);
+                return (
+                  <li key={book.slug}>
+                    {detail && <Image src={detail.cover} alt="" width={48} height={72} className="commerce-offer-cover" />}
+                    <div className="commerce-offer-details">
+                      <Link href={`/books/${book.slug}`}>{book.title}</Link>
+                      <span>PDF ebook · {formatPrice(book.price_minor, book.currency)} {book.currency}</span>
+                    </div>
+                    <button type="button" className="commerce-add-book" disabled={busy} onClick={() => addBook(book.slug)} aria-label={`Add ${book.title} for ${formatPrice(book.price_minor, book.currency)} ${book.currency}`}>
+                      + Add ebook
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </aside>
         )}
         <Link className="text-link" href="/books">
           Continue exploring the books →
@@ -232,7 +271,7 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
           </p>
         )}
         {selected.length > 0 && currencies.size === 1 && (
-          <p className="commerce-total">
+          <p className="commerce-total" aria-live="polite" aria-atomic="true">
             <span>Subtotal</span>
             <strong>
               {formatPrice(
@@ -251,6 +290,7 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
           Reviewed ebooks are delivered as private downloads after payment
           confirmation. No shipping is required.
         </p></div>
+        <PaymentSecurityNotice />
         {checkout ? (
           <form onSubmit={pay} className="commerce-form">
             <label htmlFor="purchase-email">Email address</label>
@@ -311,9 +351,6 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
             Please purchase ebooks in different currencies separately.
           </p>
         )}
-        <p className="edition-note commerce-security-note">
-          <span aria-hidden="true">↗</span> Secure payment on Stripe. Your card details stay on Stripe’s payment page.
-        </p>
       </section>
     </div>
     </>

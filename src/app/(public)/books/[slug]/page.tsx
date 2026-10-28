@@ -5,6 +5,7 @@ import { getPublicBooks } from "@/lib/database/catalog";
 import { BookCard, BookCover, Eyebrow } from "@/components/ui";
 import { BookEditions } from "@/components/book-editions";
 import { ShareButton } from "@/components/share-button";
+import { bookDisplayTitle } from "@/lib/book-display";
 export const revalidate = 60;
 // Render new published slugs on first visit, then reuse the ISR page cache.
 export async function generateStaticParams() {
@@ -22,7 +23,7 @@ export async function generateMetadata({
   return {
     title:
       book.seoTitle ||
-      `${book.title}${book.series ? ` — ${book.series.split(" · ")[1]}` : ""}`,
+      `${bookDisplayTitle(book)}${book.series ? ` — ${book.series.split(" · ")[1]}` : ""}`,
     description: book.seoDescription || book.description,
   };
 }
@@ -35,6 +36,7 @@ export default async function BookPage({
   const books = await getPublicBooks();
   const book = books.find((b) => b.slug === slug);
   if (!book) notFound();
+  const displayTitle = bookDisplayTitle(book);
   return (
     <main id="main" className="book-page">
       <div className="container">
@@ -44,7 +46,7 @@ export default async function BookPage({
           <Link href="/books">The books</Link>
           <span aria-hidden="true">/</span>
           <span>
-            {book.title}
+            {displayTitle}
             {book.series ? ` · ${book.series.split(" · ")[1]}` : ""}
           </span>
         </nav>
@@ -59,14 +61,14 @@ export default async function BookPage({
               {book.category}
               {book.series && ` / ${book.series.split(" · ")[1]}`}
             </Eyebrow>
-            <h1>{book.title}</h1>
-            <p className="detail-subtitle">{book.subtitle}</p>
+            <h1 className={displayTitle.length > 35 ? "detail-title-long" : undefined}>{displayTitle}</h1>
+            {book.subtitle !== displayTitle && <p className="detail-subtitle">{book.subtitle}</p>}
             <Link href="/about" className="byline">
               By Edmund Spencer Katso
             </Link>
             <p className="detail-description">{book.description}</p>
             <BookEditions book={book} />
-            <ShareButton title={`${book.title} — Edmund Spencer Katso`} />
+            <ShareButton title={`${displayTitle} — Edmund Spencer Katso`} />
           </div>
         </section>
         <section className="book-story" data-reveal>

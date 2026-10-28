@@ -116,3 +116,39 @@
   .public-site .commerce-downloads .button { width: 100%; justify-content: center; }
   .public-site .commerce-order-details { flex-direction: column; gap: 18px; }
 }
+
+.public-site .payment-security {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: #182c37;
+  color: #fffaf0;
+  padding: 21px;
+  border: 1px solid #182c37;
+  border-radius: 4px;
+  margin: 8px 0 26px;
+}
+.public-site .payment-security svg { width: 25px; height: 25px; flex-shrink: 0; color: #e4c691; }
+.public-site .payment-security strong { display: block; font-size: 15px; line-height: 1.6; }
+.public-site .commerce-panel .payment-security p { margin: 8px 0 0; color: #dae3e4; font-size: 12px; line-height: 1.7; }
+.public-site .commerce-recommendations { margin: 30px 0; padding: 24px 20px; background: #f0eee2; border: 1px solid #c7c7b1; border-radius: 4px; }
+.public-site .commerce-recommendations h3 { font: 30px/1.15 var(--serif); margin: 0; }
+.public-site .commerce-panel .commerce-recommendations-intro { font-size: 13px; line-height: 1.7; margin: 12px 0 20px; color: #50594b; }
+.public-site .commerce-recommendations ul { list-style: none; padding: 0; margin: 0; }
+.public-site .commerce-recommendations li { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 18px 0; border-top: 1px solid #cccdbb; }
+.public-site .commerce-offer-cover { width: 48px; height: 72px; object-fit: contain; }
+.public-site .commerce-offer-details { grid-column: 2; min-width: 0; }
+.public-site .commerce-offer-details a { display: block; font: 20px/1.25 var(--serif); overflow-wrap: anywhere; }
+.public-site .commerce-offer-details span { display: block; margin-top: 9px; font-size: 11px; line-height: 1.6; color: #4b5545; }
+.public-site .commerce-add-book { border: 1px solid #244736; background: #fafbf4; color: #244736; border-radius: 3px; padding: 12px; min-height: 44px; font: inherit; font-size: 12px; white-space: nowrap; cursor: pointer; }
+.public-site .commerce-add-book:hover:not(:disabled) { background: #244736; color: #fffaf0; }
+.public-site .commerce-add-book:disabled { opacity: .6; cursor: wait; }
+@media (min-width: 1001px) and (max-width: 1200px), (max-width: 600px) {
+  .public-site .commerce-recommendations li { grid-template-columns: 48px minmax(0, 1fr); }
+  .public-site .commerce-add-book { grid-column: 2; justify-self: start; }
+  .public-site .commerce-offer-cover { grid-row: span 2; align-self: start; }
+}
+@media (max-width: 600px) {
+  .public-site .commerce-recommendations { padding: 20px 15px; }
+  .public-site .payment-security { padding: 18px 15px; gap: 11px; }
+}
