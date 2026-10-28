@@ -1,6 +1,6 @@
 import type { Book } from "@/lib/content";
 import { Arrow } from "./icons";
-import { Eyebrow, RetailerLink } from "./ui";
+import { Eyebrow } from "./ui";
 
 /** Presentation only. Direct purchases remain unavailable until commerce is authorized. */
 export function BookEditions({ book }: { book: Book }) {
@@ -10,59 +10,13 @@ export function BookEditions({ book }: { book: Book }) {
       aria-label="Book editions and purchasing options"
     >
       <Eyebrow>Choose your edition</Eyebrow>
-      {book.amazonEbook && (
-        <section
-          className="edition-option edition-amazon"
-          aria-labelledby={`${book.slug}-kindle`}
-        >
-          <div className="edition-option-heading">
-            <h2 id={`${book.slug}-kindle`}>Kindle ebook</h2>
-            <span className="availability">Available on Amazon</span>
-          </div>
-          <p>Read with Kindle devices and apps.</p>
-          {book.kindleUnlimited && (
-            <p className="edition-note">
-              Also available to read with a Kindle Unlimited subscription.
-              Subscription required; this is separate from buying the ebook.
-            </p>
-          )}
-          <RetailerLink book={book} prominent />
-          <p className="edition-note">
-            Amazon handles pricing, payment and delivery.
-          </p>
-        </section>
-      )}
-      {book.amazonPaperback && (
-        <section
-          className="edition-option"
-          aria-labelledby={`${book.slug}-paperback`}
-        >
-          <div className="edition-option-heading">
-            <h2 id={`${book.slug}-paperback`}>Paperback</h2>
-            <span className="availability">Available on Amazon</span>
-          </div>
-          <p>A printed edition to read and keep.</p>
-          <a
-            className="button retailer-button"
-            href={book.amazonPaperback}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Buy paperback on Amazon
-            <Arrow diagonal />
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
-          <p className="edition-note">
-            Amazon handles pricing, payment and delivery.
-          </p>
-        </section>
-      )}
       <section
-        className="edition-option"
-        aria-labelledby={`${book.slug}-direct`}
+        className="edition-option edition-direct"
+        id={`${book.slug}-direct`}
+        aria-labelledby={`${book.slug}-direct-title`}
       >
         <div className="edition-option-heading">
-          <h2 id={`${book.slug}-direct`}>Direct ebook</h2>
+          <h2 id={`${book.slug}-direct-title`}>Ebook — buy directly</h2>
           <span className="availability">Not open yet</span>
         </div>
         {book.ebookPrice && (
@@ -92,6 +46,32 @@ export function BookEditions({ book }: { book: Book }) {
           <Arrow />
         </button>
       </section>
+
+      {book.amazonPaperback && (
+        <section
+          className="edition-option"
+          aria-labelledby={`${book.slug}-paperback`}
+        >
+          <div className="edition-option-heading">
+            <h2 id={`${book.slug}-paperback`}>Paperback</h2>
+            <span className="availability">Available on Amazon</span>
+          </div>
+          <p>A printed edition to read and keep.</p>
+          <a
+            className="button retailer-button"
+            href={book.amazonPaperback}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Buy paperback on Amazon
+            <Arrow diagonal />
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
+          <p className="edition-note">
+            Amazon handles pricing, payment and delivery.
+          </p>
+        </section>
+      )}
       {book.formats.includes("Hardcover") && (
         <section
           className="edition-option"

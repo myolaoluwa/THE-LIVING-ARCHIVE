@@ -250,7 +250,7 @@ test("Contact review does not pretend to send a message", async ({ page }) => {
     "this website has not sent it",
   );
 });
-test("Each book separates direct ebooks, Kindle and eligible hardcover options", async ({
+test("Each book offers direct ebooks and retains eligible Amazon print options", async ({
   page,
 }) => {
   const editions = [
@@ -265,14 +265,12 @@ test("Each book separates direct ebooks, Kindle and eligible hardcover options",
     });
     await expect(
       options
-        .getByRole("region", { name: "Direct ebook", exact: true })
+        .getByRole("region", { name: "Ebook — buy directly", exact: true })
         .getByRole("button", { name: "Buy ebook directly" }),
     ).toBeDisabled();
     await expect(
-      options
-        .getByRole("region", { name: "Kindle ebook", exact: true })
-        .getByRole("link", { name: /Buy Kindle on Amazon/ }),
-    ).toHaveAttribute("href", `https://www.amazon.com/dp/${edition.asin}`);
+      page.locator(`a[href="https://www.amazon.com/dp/${edition.asin}"]`),
+    ).toHaveCount(0);
     const hardcover = options.getByRole("region", {
       name: "Hardcover",
       exact: true,

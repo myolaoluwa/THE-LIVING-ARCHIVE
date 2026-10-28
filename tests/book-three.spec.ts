@@ -10,7 +10,8 @@ test("the fourth book is discoverable and has a responsive, accessible detail pa
   for (const width of [375, 768, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     await expect(page.getByRole("heading", { level: 1, name: "The Shadow of the Beast" })).toBeVisible();
-    await expect(page.getByRole("link", { name: /Buy Kindle on Amazon/ }).first()).toHaveAttribute("href", "https://www.amazon.com/dp/B0GX2ZY8MF");
+    await expect(page.getByRole("button", { name: "Buy ebook directly" })).toBeDisabled();
+    await expect(page.locator('a[href="https://www.amazon.com/dp/B0GX2ZY8MF"]')).toHaveCount(0);
     const cover = page.locator(".detail-stage img");
     await cover.evaluate((img: HTMLImageElement) => img.decode());
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

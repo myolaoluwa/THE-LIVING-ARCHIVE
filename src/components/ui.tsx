@@ -149,12 +149,19 @@ export function BookCard({
   book: Book;
   priority?: boolean;
 }) {
+  const listingTitle =
+    book.slug === "4daniel-book-one"
+      ? "A Precolonial History and My Life History in Rhodesia and Zimbabwe"
+      : book.slug === "4daniel-book-two"
+        ? "An African Colonial History and Memoir"
+        : book.title;
+  const promotedSubtitle = listingTitle === book.subtitle;
   return (
     <article className="book-card" data-reveal>
       <Link
         href={`/books/${book.slug}`}
         className={`book-stage ${book.tone}`}
-        aria-label={`Explore ${book.title}${book.series ? `, ${book.series}` : ""}`}
+        aria-label={`Explore ${listingTitle}${book.series ? `, ${book.series}` : ""}`}
       >
         <span className="stage-index">{book.number} / THE COLLECTION</span>
         <BookCover book={book} priority={priority} />
@@ -167,10 +174,10 @@ export function BookCard({
           {book.category}
           {book.series && <span> · {book.series.split(" · ")[1]}</span>}
         </p>
-        <h3>
-          <Link href={`/books/${book.slug}`}>{book.title}</Link>
+        <h3 className={listingTitle.length > 45 ? "book-title-long" : undefined}>
+          <Link href={`/books/${book.slug}`}>{listingTitle}</Link>
         </h3>
-        <p className="book-subtitle">{book.subtitle}</p>
+        {!promotedSubtitle && <p className="book-subtitle">{book.subtitle}</p>}
         <p className="book-description">{book.description}</p>
         <div className="book-card-bottom">
           <span className="format">
@@ -178,37 +185,15 @@ export function BookCard({
           </span>
           <div className="book-card-actions">
             <TextLink href={`/books/${book.slug}`}>View book</TextLink>
-            <RetailerLink book={book} />
+            <Link
+              href={`/books/${book.slug}#${book.slug}-direct`}
+              className="retailer-link"
+            >
+              Buy ebook directly <Arrow />
+            </Link>
           </div>
         </div>
       </div>
     </article>
-  );
-}
-
-export function RetailerLink({
-  book,
-  prominent = false,
-}: {
-  book: Book;
-  prominent?: boolean;
-}) {
-  if (!book.amazonEbook) return null;
-  return (
-    <a
-      href={book.amazonEbook}
-      className={prominent ? "button retailer-button" : "retailer-link"}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {prominent ? "Buy Kindle on Amazon" : "Kindle on Amazon"}
-      <Arrow diagonal />
-      <span className="sr-only">
-        {" "}
-        — {book.title}
-        {book.series ? `, ${book.series.split(" · ")[1]}` : ""} (opens in a new
-        tab)
-      </span>
-    </a>
   );
 }

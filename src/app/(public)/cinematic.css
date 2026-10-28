@@ -2151,3 +2151,10 @@
     font-size: 23px;
   }
 }
+
+/* Full bibliographic titles retain the bookshelf's editorial scale. */
+.public-site .book-card h3.book-title-long {
+  font-size: clamp(26px, 2.3vw, 32px);
+  line-height: 1.15;
+  text-wrap: pretty;
+}

@@ -47,8 +47,8 @@ test("Core publishing and discovery remain usable without JavaScript", async ({
     .click();
   await expect(page.locator("h1")).toHaveText("4Daniel");
   await expect(
-    page.getByRole("link", { name: /Buy Kindle on Amazon/ }),
-  ).toBeVisible();
+    page.getByRole("button", { name: "Buy ebook directly" }),
+  ).toBeDisabled();
   await context.close();
 });
 

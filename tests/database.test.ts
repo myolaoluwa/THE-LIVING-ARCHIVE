@@ -476,7 +476,8 @@ test("real published PostgreSQL records render the confirmed catalog and keep ch
     }
     assert.ok(book.cover.startsWith("/images/"));
     const markup = renderToStaticMarkup(createElement(BookEditions, { book }));
-    assert.ok(markup.includes(book.amazonEbook));
+    assert.ok(!markup.includes(book.amazonEbook));
+    if (book.amazonPaperback) assert.ok(markup.includes(book.amazonPaperback));
     assert.ok(markup.includes("Buy ebook directly"));
     assert.ok(markup.includes('disabled=""'));
     assert.equal(
