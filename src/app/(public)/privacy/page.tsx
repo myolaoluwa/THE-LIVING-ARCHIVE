@@ -14,7 +14,7 @@ export default function PrivacyPage() {
           Privacy &<br />
           <em>site information.</em>
         </h1>
-        <p className="privacy-updated">Last updated: <time dateTime="2026-10-27">27 October 2026</time></p>
+        <p className="privacy-updated">Last updated: <time dateTime="2026-10-28">28 October 2026</time></p>
         <div className="reading-copy">
           <p className="standfirst">
             This notice explains what happens to your information when you visit
@@ -92,11 +92,28 @@ export default function PrivacyPage() {
             Other linked websites, including bibliographic sources, manage the
             information you share with them under their own policies.
           </p>
+          <h2>Direct ebook purchases</h2>
           <p>
-            Direct website checkout, customer downloads, reader accounts and
-            newsletter subscriptions are not currently active. Entering an enquiry
-            does not create an account or subscription. This notice will be
-            updated before additional services start collecting personal information.
+            When direct checkout is enabled, the cart stores selected book slugs in a necessary
+            browser cookie for up to 30 days. It contains no card details or email address.
+            Checkout sends your purchase email and selected ebooks to this website and Stripe
+            to arrange payment. Card details are entered on Stripe’s checkout page.
+            Orders, payment references and download permissions are stored privately in Supabase.
+          </p>
+          <p>
+            A necessary, HttpOnly purchase-access cookie lasts up to seven days and allows
+            this browser to access a verified purchase. Download links expire after 45 seconds;
+            access requests are logged and rate limited to protect purchased files. Request-rate
+            keys are hashed with a server secret and retained for up to two days once the
+            delivery worker runs. The service does not store raw IP addresses in those keys.
+          </p>
+          <p>
+            When transactional email is enabled, Brevo sends purchase confirmations and
+            recovery links to the purchase email. Recovery links expire after 30 minutes,
+            can be used once, and replace the previous browser-access credential.
+            Payment does not subscribe you to marketing. Newsletter subscriptions remain inactive.
+            See <a href="https://stripe.com/privacy">Stripe’s privacy policy</a> and{" "}
+            <a href="https://www.brevo.com/legal/privacypolicy/">Brevo’s privacy policy</a>.
           </p>
           <h2>How long information is kept</h2>
           <p>
@@ -108,7 +125,10 @@ export default function PrivacyPage() {
             purposes, they should be deleted. There is no fixed retention period
             for every enquiry. Contact the author about retention or deletion of a
             particular conversation. Technical-log retention depends on the
-            hosting service and its configured settings.
+            hosting service and its configured settings. Purchase records may be retained
+            for accounting, support and applicable legal obligations. Contact the author
+            about access or deletion; some transaction records may need to be retained.
+            Expired recovery-token records are removed after one additional day when the delivery worker runs.
           </p>
           <h2>Your choices and rights</h2>
           <p>

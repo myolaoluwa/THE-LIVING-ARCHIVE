@@ -1,6 +1,6 @@
 # The Living Archive
 
-Current connection work: the hosted Supabase schema and four-book catalog are installed and verified. `BACKEND_ENABLED=true` enables anonymous database-backed public content and real administrator authentication; credentials alone do not enable it. New installations default to source-managed mode until their migrations are applied. Live payments, customer downloads and newsletter delivery remain unimplemented. See [connection verification](docs/CONNECTION_VERIFICATION.md) and [administrator setup](docs/PHASE3_SETUP.md).
+Current connection work: the hosted Supabase schema and four-book catalog are installed and verified. `BACKEND_ENABLED=true` enables anonymous database-backed public content and real administrator authentication; credentials alone do not enable it. New installations default to source-managed mode until their migrations are applied. Stripe Checkout, a persistent ebook cart, verified payment handling, private downloads and transactional-email recovery are implemented locally and disabled pending setup. Newsletter delivery remains unimplemented. See [Stripe setup](docs/STRIPE_SETUP.md). See [connection verification](docs/CONNECTION_VERIFICATION.md) and [administrator setup](docs/PHASE3_SETUP.md).
 
 Edmund Spencer Katso’s author website, with a cinematic editorial frontend and Phase 3 database/admin implementation. Built with Next.js App Router, React, strict TypeScript and Supabase. Live payments and customer ebook delivery remain disabled.
 

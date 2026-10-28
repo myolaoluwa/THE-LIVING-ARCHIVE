@@ -48,7 +48,7 @@ export const books: Book[] = [
     amazonHardcover: approvedHardcoverUrl("4daniel-book-one"),
     amazonPaperback: "https://www.amazon.com/dp/B0CYVNQJ4M",
     ebookPrice: { amountMinor: 777, currency: "USD" },
-    kindleUnlimited: true,
+    kindleUnlimited: false,
   },
   {
     slug: "4daniel-book-two",
@@ -72,7 +72,7 @@ export const books: Book[] = [
     amazonHardcover: approvedHardcoverUrl("4daniel-book-two"),
     amazonPaperback: "https://www.amazon.com/dp/B0FQP4FZ58",
     ebookPrice: { amountMinor: 999, currency: "USD" },
-    kindleUnlimited: true,
+    kindleUnlimited: false,
   },
   {
     slug: "the-bile-of-the-river",
@@ -94,7 +94,7 @@ export const books: Book[] = [
     amazonEbook: "https://www.amazon.com/dp/B0H4BTT1QH",
     amazonPaperback: "https://www.amazon.com/dp/B0H4CRDM47",
     ebookPrice: { amountMinor: 693, currency: "USD" },
-    kindleUnlimited: true,
+    kindleUnlimited: false,
   },
   {
     slug: "4daniel-book-three",
@@ -118,7 +118,7 @@ export const books: Book[] = [
     amazonEbook: "https://www.amazon.com/dp/B0GX2ZY8MF",
     // Owner-requested holding price, not a free website download offer.
     ebookPrice: { amountMinor: 0, currency: "USD" },
-    kindleUnlimited: true,
+    kindleUnlimited: false,
   },
 ];
 

@@ -7,6 +7,22 @@ const config: NextConfig = {
   devIndicators: false,
   async headers() {
     return [
+      ...[
+        "/cart",
+        "/checkout/:path*",
+        "/order/:path*",
+        "/api/checkout/:path*",
+        "/api/order/:path*",
+        "/api/download",
+        "/api/stripe/:path*",
+        "/api/internal/:path*",
+      ].map((source) => ({
+        source,
+        headers: [
+          { key: "Cache-Control", value: "private, no-store" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      })),
       {
         source: "/(.*)",
         headers: [

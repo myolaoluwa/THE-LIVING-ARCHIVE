@@ -2,6 +2,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ArchiveMotion } from "@/components/archive-motion";
 import "./cinematic.css";
+import "./commerce.css";
 export default function PublicLayout({
   children,
 }: {

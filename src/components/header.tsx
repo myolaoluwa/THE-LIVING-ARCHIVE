@@ -8,6 +8,7 @@ const links = [
   { href: "/books", label: "The Books" },
   { href: "/about", label: "The Author" },
   { href: "/contact", label: "Contact" },
+  { href: "/cart", label: "Ebook cart" },
 ];
 export function Header() {
   const pathname = usePathname();

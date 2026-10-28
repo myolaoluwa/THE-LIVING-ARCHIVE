@@ -1,8 +1,9 @@
 import type { Book } from "@/lib/content";
 import { Arrow } from "./icons";
+import { DirectPurchaseButton } from "./commerce/direct-purchase-button";
 import { Eyebrow } from "./ui";
 
-/** Presentation only. Direct purchases remain unavailable until commerce is authorized. */
+/** Only eligible editions can enter checkout; the server revalidates every purchase. */
 export function BookEditions({ book }: { book: Book }) {
   return (
     <section
@@ -17,11 +18,11 @@ export function BookEditions({ book }: { book: Book }) {
       >
         <div className="edition-option-heading">
           <h2 id={`${book.slug}-direct-title`}>Ebook — buy directly</h2>
-          <span className="availability">Not open yet</span>
+          <span className="availability">Digital edition</span>
         </div>
         {book.ebookPrice && (
           <p className="edition-price">
-            <span>Planned ebook price</span>
+            <span>Ebook price</span>
             <strong>
               {new Intl.NumberFormat("en-US", {
                 style: "currency",
@@ -32,19 +33,11 @@ export function BookEditions({ book }: { book: Book }) {
           </p>
         )}
         <p id={`${book.slug}-direct-note`}>
-          {book.ebookPrice?.amountMinor === 0 && book.kindleUnlimited
-            ? "Website downloads are on hold while this title is in Kindle Unlimited. The displayed $0.00 is a temporary holding price, not a free download offer."
-            : "Direct ebook purchases from this website are not open yet."}
+          {book.ebookPrice?.amountMinor === 0
+            ? "The selling price for this edition is not set. The displayed $0.00 is a temporary holding price, not a free download offer."
+            : "Choose the digital edition for direct website purchase when it is available."}
         </p>
-        <button
-          type="button"
-          className="button edition-unavailable"
-          disabled
-          aria-describedby={`${book.slug}-direct-note`}
-        >
-          Buy ebook directly
-          <Arrow />
-        </button>
+        <DirectPurchaseButton slug={book.slug} noteId={`${book.slug}-direct-note`} />
       </section>
 
       {book.amazonPaperback && (

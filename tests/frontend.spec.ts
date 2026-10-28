@@ -286,7 +286,7 @@ test("Each book offers direct ebooks and retains eligible Amazon print options",
       await expect(hardcover.getByRole("button")).toHaveCount(0);
     } else await expect(hardcover).toHaveCount(0);
     await expect(
-      page.locator('a[href*="checkout"], a[href*="cart"], input[name*="card"]'),
+      options.locator('a[href*="checkout.stripe.com"], input[name*="card"]'),
     ).toHaveCount(0);
   }
 });

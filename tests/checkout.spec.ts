@@ -1,0 +1,137 @@
+import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+const routes = [
+  "/cart",
+  "/checkout",
+  "/checkout/success",
+  "/checkout/cancel",
+  "/order/recover",
+  "/purchase-information",
+];
+for (const width of [375, 768, 1440]) {
+  test(`Checkout pages are accessible and contained at ${width}px`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize({ width, height: 1000 });
+    for (const route of routes) {
+      const response = await page.goto(route);
+      expect(response?.status()).toBe(200);
+      await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+        route,
+      ).toBe(true);
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+        "content",
+        /noindex/,
+      );
+      expect(
+        (
+          await new AxeBuilder({ page })
+            .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+            .analyze()
+        ).violations,
+        route,
+      ).toEqual([]);
+    }
+    await page.goto("/checkout");
+    await page.screenshot({
+      path: `/private/tmp/archive-checkout-${width}.png`,
+      fullPage: true,
+    });
+  });
+}
+
+test("Unconfigured endpoints cannot create payments, unlock orders or expose private files", async ({
+  request,
+  page,
+}) => {
+  const catalog = await request.get("/api/checkout/catalog");
+  expect(await catalog.json()).toEqual({ enabled: false, books: [] });
+  for (const route of [
+    "/api/checkout/session",
+    "/api/stripe/webhook",
+    "/api/download",
+    "/api/order/access",
+  ]) {
+    const r = await request.post(route, { data: { price: 1, paid: true } });
+    expect(r.status(), route).toBe(503);
+  }
+  expect((await request.get("/api/internal/commerce-email")).status()).toBe(
+    401,
+  );
+  expect(
+    (await request.get("/private/ebooks/4daniel-book-one.pdf")).status(),
+  ).toBe(404);
+  await page.goto("/checkout/success?session_id=cs_test_guessed");
+  await expect(
+    page.getByText("Payment confirmed. Your ebooks are ready."),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Download ebook" }),
+  ).toHaveCount(0);
+});
+
+test("Cart UI persists selections and retries checkout without sending client prices", async ({
+  page,
+  context,
+}) => {
+  // UI-only fixture. PostgreSQL, Stripe signature and permissions have separate
+  // real-engine/SDK tests; this does not claim hosted Stripe integration.
+  await page.route("**/api/checkout/catalog", (route) =>
+    route.fulfill({
+      json: {
+        enabled: true,
+        testMode: true,
+        books: [
+          {
+            slug: "4daniel-book-one",
+            title:
+              "A Precolonial History and My Life History in Rhodesia and Zimbabwe",
+            price_minor: 777,
+            currency: "USD",
+          },
+        ],
+      },
+    }),
+  );
+  const requests: Record<string, unknown>[] = [];
+  await page.route("**/api/checkout/session", async (route) => {
+    requests.push(route.request().postDataJSON());
+    await route.fulfill({
+      status: 502,
+      json: { message: "Test provider unavailable; retry this checkout." },
+    });
+  });
+  await page.goto("/cart?add=4daniel-book-one");
+  await expect(
+    page.getByRole("link", { name: "Proceed to checkout" }),
+  ).toBeVisible();
+  await page.reload();
+  await expect(page.getByText("$7.77 USD", { exact: false })).toBeVisible();
+  expect(
+    (await context.cookies()).some((cookie) => cookie.name === "archive_cart"),
+  ).toBe(true);
+  await page.getByRole("link", { name: "Proceed to checkout" }).click();
+  await page
+    .getByLabel("Email address", { exact: true })
+    .fill("buyer@example.test");
+  await page.getByRole("checkbox").check();
+  await page
+    .getByRole("button", { name: "Continue to Stripe Checkout" })
+    .click();
+  await expect(page.getByRole("status")).toContainText(
+    "Test provider unavailable",
+  );
+  await page
+    .getByRole("button", { name: "Continue to Stripe Checkout" })
+    .click();
+  await expect.poll(() => requests.length).toBe(2);
+  expect(requests[0]).toEqual(requests[1]);
+  expect(requests[0]).not.toHaveProperty("price");
+  expect(requests[0]).not.toHaveProperty("currency");
+  expect(requests[0].slugs).toEqual(["4daniel-book-one"]);
+});

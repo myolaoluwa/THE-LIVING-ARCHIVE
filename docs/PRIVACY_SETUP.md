@@ -1,3 +1,5 @@
+> Checkout update, 28 October 2026: the local implementation now includes necessary cart/purchase-access cookies, Stripe checkout, private Supabase order/download records and optional Brevo transactional email. These are off until commerce is configured. The privacy page documents them before activation. The original checks below describe the earlier browsing/contact-only release; they do not verify the new checkout system. See `docs/STRIPE_SETUP.md` for current acceptance requirements.
+
 # Privacy setup for the current release
 
 ## Implemented

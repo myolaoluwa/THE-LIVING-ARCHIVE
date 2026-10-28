@@ -1,33 +1,11 @@
-# Direct purchases, secure downloads and newsletter
+# Direct purchases, secure downloads and transactional email
 
-The owner requested direct website purchases, downloads, Stripe and newsletter subscriptions after temporarily postponing the backend. This scope requires server-side payment, storage and email services. Public design and Amazon edition links must remain intact. Existing source-managed publishing may remain in use while dedicated commerce services are added.
+Stripe Checkout, an ebook-only cart, private downloads, purchase recovery and a durable transactional email queue are implemented locally. They are **not activated for production**. See [STRIPE_SETUP.md](STRIPE_SETUP.md) for setup, security controls, test requirements and known limits.
 
-## Current status
+The owner confirmed all four books eligible for direct website sales on 28 October 2026. The new checkout migration records that confirmation without enabling availability. Books One and Two have positive USD prices and supplied PDFs; Book Three has a supplied PDF but still has a $0 holding price. All three supplied PDFs have now been uploaded to private Supabase storage, remotely checksum-verified and registered pending administrator review. No edition availability was changed. The Bile of the River has a price but no supplied PDF. All private assets require administrator review before availability can be enabled.
 
-Existing migrations define orders, order items, payment events, entitlements, download tokens, subscribers and private storage. These are a foundation, not a working checkout or customer-download system. Supabase previously responded to its Auth endpoint but the books table was missing. Migration completion and privileged access remain unverified. No Stripe or email provider integration is implemented. Backend remains disabled pending setup; adding the reserved environment variables alone does not activate commerce.
+The original Supabase schema, private bucket and one active owner are present. The privileged key is now populated locally. On 28 October 2026 the owner ran `supabase/checkout_setup.sql` successfully. A read-only hosted check confirmed the service-only checkout catalog RPC is installed and denied to the public client, all four books are no longer marked Kindle Unlimited, and all three uploaded assets remain pending review. The catalog correctly exposes zero purchasable titles. The Stripe test secret is now authenticated against the Stripe API. A test webhook for the production-domain route has been registered and disabled pending deployment; its signing secret is saved in ignored `.env.local`. The Stripe test key, webhook signing secret, privileged Supabase key, rate-limit secret, cron secret and checkout flags are saved in Vercel Production. Its site URL is the public HTTPS domain. Commerce and live payments remain disabled. A new checkout-code deployment and subsequent webhook activation are still required; environment changes do not modify existing deployments. No live Stripe payment or customer purchase has been performed by this implementation work.
 
-## Inputs needed before activation
+Brevo integration follows the provider proposed in the build plan. Its account, verified sender, API key, actual delivery and retry scheduler require setup. Transactional email is off by default. Newsletter collection is separate and remains unimplemented.
 
-- Pricing instruction from the owner: match each book's Amazon Kindle edition price. Subsequent screenshots establish USD $7.77 for Book One, $9.99 for Book Two and $6.93 for The Bile of the River. Book Three has an owner-requested $0 holding value while enrolled in Kindle Unlimited, with website distribution disabled. See `docs/EBOOK_PRICING.md`. This is an initial pricing policy, not automatic Amazon price synchronization.
-- Approved PDF and/or EPUB files and confirmation that the author can sell these digital editions directly, including any applicable distribution exclusivity.
-- Supabase schema installed, private storage ready, and authorized server-side credentials configured securely.
-- Author-owned Stripe account with confirmed merchant eligibility, country, settlement currency and tax settings. Start in test mode.
-- Approved email/newsletter provider. The build plan proposes Brevo. Verify the sender/domain and configure transactional messages, double opt-in and unsubscribe flows.
-- Approved purchase, refund, digital delivery and privacy terms; customer support address is `edmund.katso@gmail.com`.
-
-## Implementation sequence
-
-1. Validate hosted migrations, permissions and immutable private ebook versions. Reconcile the current approved source catalog before enabling database-backed public publishing.
-2. Add persistent ebook-only cart and server-authoritative prices, currency, availability and direct-sale eligibility. Physical Amazon editions stay outside this checkout.
-3. Create Stripe Checkout Sessions server-side with idempotency and pending order snapshots. Collect no card details in this application.
-4. Verify webhook signatures, deduplicate events, match amounts/currency/session, and atomically grant entitlements only after confirmed payment. Handle delayed payment methods, retries, refunds and disputes.
-5. Provide private, expiring download access with hashed recovery tokens, email verification, access logging, revocation and rate limits. No permanent public ebook URLs.
-6. Add reliable transactional email delivery/retries, customer recovery and generic responses that do not disclose purchase history.
-7. Add real newsletter double opt-in, separate marketing consent, unsubscribe, durable provider synchronization and abuse protection. A purchase must not silently subscribe its customer.
-8. Update privacy/purchase notices and run the Master Build Plan's payment, failure, duplicate webhook, private-file, refund, accessibility and responsive acceptance tests.
-
-## Configuration preparation
-
-`.env.example` contains reserved server-only variable names for Stripe, Supabase privileged access and the proposed Brevo provider. They are documentation placeholders, not implemented functionality. Add actual secrets only to ignored local configuration and the authorized Vercel environment. Keep live payments off until test-mode end-to-end checks pass.
-
-The owner will configure Stripe and Supabase later. Account setup is not a prerequisite for writing and locally testing the integration, but it is required for hosted end-to-end verification and activation. PDF/EPUB files, direct-sale rights, verified prices and the email-provider decision remain outstanding.
+Final selling price for Book Three, The Bile of the River PDF, reviewed private assets, hosted acceptance tests, final purchase terms and merchant/tax/domain configuration remain launch dependencies. Do not treat local fixtures as real orders or claimed Stripe/Supabase integration success.

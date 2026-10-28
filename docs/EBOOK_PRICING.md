@@ -1,3 +1,5 @@
+> Owner update, 28 October 2026: all four titles are confirmed eligible for direct website sales. The checkout migration clears the old Kindle Unlimited flags and records that confirmation. Book Three still needs a positive selling price; its $0 placeholder is not a free offer. Reviewed private storage and edition availability are also required before any title enters checkout.
+
 # Approved ebook pricing
 
 Source: owner-supplied Amazon.com screenshots and explicit instruction on 2026-10-27. Values are recorded in USD minor units for future direct-sale configuration; no checkout or download service is activated.

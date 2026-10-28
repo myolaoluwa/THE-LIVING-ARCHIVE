@@ -38,7 +38,7 @@ async function count(table: string) {
 before(async () => {
   // Test fixtures supply only the Supabase-owned schemas and signed-claim context.
   // Migrations and RLS execute in the actual PostgreSQL engine, not a mocked query API.
-  await db.exec(`create role anon nologin; create role authenticated nologin;
+  await db.exec(`create role anon nologin; create role authenticated nologin; create role service_role nologin bypassrls;
  create schema auth; create table auth.users(id uuid primary key);
  create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claims',true)::jsonb->>'sub','')::uuid $$;
  create function auth.jwt() returns jsonb language sql stable as $$ select coalesce(nullif(current_setting('request.jwt.claims',true),''),'{}')::jsonb $$;
@@ -50,10 +50,12 @@ before(async () => {
   const files = (await readdir("supabase/migrations"))
     .filter((f) => f.endsWith(".sql"))
     .sort();
-  for (const file of files)
+  for (const file of files) {
     await db.exec(await readFile(`supabase/migrations/${file}`, "utf8"));
-  // The manual catalog reconciliation is safe to repeat without duplicating books.
-  await db.exec(await readFile("supabase/migrations/20261028000100_current_catalog.sql", "utf8"));
+    // Verify reconciliation repeatability before later owner-approved eligibility changes.
+    if (file === "20261028000100_current_catalog.sql")
+      await db.exec(await readFile(`supabase/migrations/${file}`, "utf8"));
+  }
   for (const [role, id] of Object.entries(identities)) {
     await db.query("insert into auth.users(id) values($1)", [id]);
     if (role !== "outsider")
@@ -69,13 +71,38 @@ after(async () => {
 test("migrations create the verified collection and no commercial fiction", async () => {
   await actor("anon");
   assert.equal(await count("books"), 4);
-  const synced = (await db.query<{slug:string;price_minor:number;currency:string;availability:string;direct_sale_rights_confirmed:boolean}>(
-    "select b.slug,e.price_minor,e.currency,e.availability,e.direct_sale_rights_confirmed from public.books b join public.book_editions e on e.book_id=b.id where e.sale_channel='direct' order by b.display_order",
-  )).rows;
-  assert.deepEqual(synced.map((row) => row.price_minor), [777,999,693,0]);
-  assert.ok(synced.every((row) => row.currency === "USD" && row.availability === "pending" && !row.direct_sale_rights_confirmed));
-  const paperbacks = (await db.query<{external_product_identifier:string}>("select external_product_identifier from public.book_editions where format='paperback' order by external_product_identifier")).rows;
-  assert.deepEqual(paperbacks.map((row) => row.external_product_identifier), ["B0CYVNQJ4M","B0FQP4FZ58","B0H4CRDM47"]);
+  const synced = (
+    await db.query<{
+      slug: string;
+      price_minor: number;
+      currency: string;
+      availability: string;
+      direct_sale_rights_confirmed: boolean;
+    }>(
+      "select b.slug,e.price_minor,e.currency,e.availability,e.direct_sale_rights_confirmed from public.books b join public.book_editions e on e.book_id=b.id where e.sale_channel='direct' order by b.display_order",
+    )
+  ).rows;
+  assert.deepEqual(
+    synced.map((row) => row.price_minor),
+    [777, 999, 693, 0],
+  );
+  assert.ok(
+    synced.every(
+      (row) =>
+        row.currency === "USD" &&
+        row.availability === "pending" &&
+        row.direct_sale_rights_confirmed,
+    ),
+  );
+  const paperbacks = (
+    await db.query<{ external_product_identifier: string }>(
+      "select external_product_identifier from public.book_editions where format='paperback' order by external_product_identifier",
+    )
+  ).rows;
+  assert.deepEqual(
+    paperbacks.map((row) => row.external_product_identifier),
+    ["B0CYVNQJ4M", "B0FQP4FZ58", "B0H4CRDM47"],
+  );
   await actor("owner");
   assert.equal(await count("orders"), 0);
   assert.equal(await count("customers"), 0);
@@ -111,22 +138,56 @@ test("anonymous and authenticated nonstaff cannot read private records or write 
 test("password-authenticated owners can manage content without MFA", async () => {
   for (const aal of ["aal1", "aal2"]) {
     await actor("owner", aal);
-    assert.equal((await db.query<{role:string}>("select private.staff_role() as role")).rows[0].role, "owner");
-    await db.exec("insert into public.books(slug,title) values('password-access-check','Password access check')");
-    await db.exec("delete from public.books where slug='password-access-check'");
+    assert.equal(
+      (await db.query<{ role: string }>("select private.staff_role() as role"))
+        .rows[0].role,
+      "owner",
+    );
+    await db.exec(
+      "insert into public.books(slug,title) values('password-access-check','Password access check')",
+    );
+    await db.exec(
+      "delete from public.books where slug='password-access-check'",
+    );
   }
 });
 test("inactive staff and invalid assurance claims do not grant administrator access", async () => {
   await db.exec("reset role");
-  await db.exec("update public.admin_profiles set active=false where role='editor'");
+  await db.exec(
+    "update public.admin_profiles set active=false where role='editor'",
+  );
   await actor("editor");
-  assert.equal((await db.query<{role:string|null}>("select private.staff_role() as role")).rows[0].role, null);
-  await assert.rejects(db.exec("insert into public.books(slug,title) values('inactive-access','Denied')"));
+  assert.equal(
+    (
+      await db.query<{ role: string | null }>(
+        "select private.staff_role() as role",
+      )
+    ).rows[0].role,
+    null,
+  );
+  await assert.rejects(
+    db.exec(
+      "insert into public.books(slug,title) values('inactive-access','Denied')",
+    ),
+  );
   await db.exec("reset role");
-  await db.exec("update public.admin_profiles set active=true where role='editor'");
+  await db.exec(
+    "update public.admin_profiles set active=true where role='editor'",
+  );
   await actor("owner", "invalid");
-  assert.equal((await db.query<{role:string|null}>("select private.staff_role() as role")).rows[0].role, null);
-  await assert.rejects(db.exec("insert into public.books(slug,title) values('invalid-access','Denied')"));
+  assert.equal(
+    (
+      await db.query<{ role: string | null }>(
+        "select private.staff_role() as role",
+      )
+    ).rows[0].role,
+    null,
+  );
+  await assert.rejects(
+    db.exec(
+      "insert into public.books(slug,title) values('invalid-access','Denied')",
+    ),
+  );
 });
 let newBookId: string;
 let draftData: Record<string, unknown>;
@@ -469,7 +530,7 @@ test("real published PostgreSQL records render the confirmed catalog and keep ch
     assert.equal(book.title, row.title);
     if (row.slug === "4daniel-book-three") {
       assert.equal(book.series, "4Daniel · Book Three");
-      assert.equal(book.kindleUnlimited, true);
+      assert.equal(book.kindleUnlimited, false);
       assert.deepEqual(book.ebookPrice, { amountMinor: 0, currency: "USD" });
     } else {
       assert.ok(book.amazonPaperback?.startsWith("https://www.amazon.com/dp/"));
@@ -484,11 +545,20 @@ test("real published PostgreSQL records render the confirmed catalog and keep ch
       markup.includes("Buy hardcover on Amazon"),
       ["4daniel-book-one", "4daniel-book-two"].includes(row.slug),
     );
-    assert.equal(book.formats.includes("Hardcover"), ["4daniel-book-one", "4daniel-book-two"].includes(row.slug));
+    assert.equal(
+      book.formats.includes("Hardcover"),
+      ["4daniel-book-one", "4daniel-book-two"].includes(row.slug),
+    );
     if (row.slug === "4daniel-book-one") {
-      assert.equal(book.amazonHardcover, "https://www.amazon.com/dp/B0D1K2PS2B");
+      assert.equal(
+        book.amazonHardcover,
+        "https://www.amazon.com/dp/B0D1K2PS2B",
+      );
     } else if (row.slug === "4daniel-book-two") {
-      assert.equal(book.amazonHardcover, "https://www.amazon.com/dp/B0GMTWWVWF");
+      assert.equal(
+        book.amazonHardcover,
+        "https://www.amazon.com/dp/B0GMTWWVWF",
+      );
     } else assert.equal(book.amazonHardcover, undefined);
     assert.ok(!markup.includes("/checkout"));
   }
@@ -580,4 +650,475 @@ test("populated operational records remain private and revoked staff lose access
     "update public.admin_profiles set active=true where auth_user_id=$1",
     [identities.administrator],
   );
+});
+
+// Commerce fixtures remain exclusively in this disposable PostgreSQL database.
+const checkoutId = "cccccccc-0000-4000-8000-000000000001";
+const checkoutHash = "c".repeat(64);
+let saleEdition: string;
+let saleAsset: string;
+let entitlement: string;
+async function serviceActor() {
+  await db.exec("reset role; set role service_role");
+}
+async function payment(
+  event: string,
+  state = "paid",
+  overrides: {
+    subtotal?: number;
+    tax?: number;
+    total?: number;
+    currency?: string;
+    live?: boolean;
+  } = {},
+) {
+  return db.query<{ result: string }>(
+    "select public.commerce_apply_payment($1,'checkout.session.completed','cs_test_archive','pi_archive',$2,$3,$4,$5,$6,$7,$8,'buyer@example.test') as result",
+    [
+      event,
+      overrides.live ?? false,
+      state,
+      overrides.subtotal ?? 777,
+      overrides.tax ?? 0,
+      overrides.total ?? 777,
+      overrides.currency ?? "usd",
+      checkoutId,
+    ],
+  );
+}
+
+test("commerce RPCs and secrets are unavailable to anonymous users and every staff role", async () => {
+  for (const role of [
+    "anon",
+    "outsider",
+    "editor",
+    "administrator",
+    "owner",
+  ] as const) {
+    await actor(role);
+    for (const sql of [
+      "select public.commerce_catalog()",
+      "select public.commerce_claim_email_jobs()",
+      "select * from public.checkout_attempts",
+      "select * from public.purchase_recovery_tokens",
+      "select * from public.commerce_email_jobs",
+    ])
+      await assert.rejects(db.exec(sql), /permission denied/);
+  }
+});
+test("checkout requires approved storage, sale rights, publication, positive prices and matching currencies", async () => {
+  await db.exec("reset role");
+  saleEdition = (
+    await db.query<{ id: string }>(
+      "select id from public.book_editions where book_id='20000000-0000-4000-8000-000000000001' and sale_channel='direct'",
+    )
+  ).rows[0].id;
+  await db.query(
+    "update public.book_editions set availability='pending',price_minor=777,currency='USD',direct_sale_rights_confirmed=true where id=$1",
+    [saleEdition],
+  );
+  await db.query(
+    "update public.digital_assets set status='retired' where edition_id=$1",
+    [saleEdition],
+  );
+  await serviceActor();
+  assert.deepEqual(
+    (
+      await db.query<{ data: unknown }>(
+        "select public.commerce_catalog() as data",
+      )
+    ).rows[0].data,
+    [],
+  );
+  await assert.rejects(
+    db.query(
+      "select public.commerce_begin_checkout($1,$2,array['4daniel-book-one'],'buyer@example.test',false)",
+      [checkoutId, checkoutHash],
+    ),
+  );
+  await db.exec("reset role");
+  await db.query(
+    "insert into storage.objects(bucket_id,name) values('private-ebooks','commerce-fixture/book-one.pdf')",
+  );
+  saleAsset = (
+    await db.query<{ id: string }>(
+      "insert into public.digital_assets(edition_id,storage_path,file_format,file_size,file_checksum,version,status,reviewed_by,created_by) values($1,'commerce-fixture/book-one.pdf','pdf',100,$2,100,'ready',$3,$3) returning id",
+      [saleEdition, "a".repeat(64), identities.owner],
+    )
+  ).rows[0].id;
+  await db.query(
+    "update public.book_editions set availability='available' where id=$1",
+    [saleEdition],
+  );
+  await serviceActor();
+  const catalog = (
+    await db.query<{ data: { slug: string; price_minor: number }[] }>(
+      "select public.commerce_catalog() as data",
+    )
+  ).rows[0].data;
+  assert.equal(catalog.length, 1);
+  assert.equal(catalog[0].price_minor, 777);
+  for (const [column, value] of [
+    ["direct_sale_rights_confirmed", false],
+    ["price_minor", 0],
+  ] as const) {
+    await db.exec("reset role");
+    await db.query(
+      `update public.book_editions set ${column}=$1, availability='pending' where id=$2`,
+      [value, saleEdition],
+    );
+    await serviceActor();
+    await assert.rejects(
+      db.query(
+        "select public.commerce_begin_checkout($1,$2,array['4daniel-book-one'],'buyer@example.test',false)",
+        [checkoutId, checkoutHash],
+      ),
+    );
+    await db.exec("reset role");
+    await db.query(`update public.book_editions set ${column}=$1 where id=$2`, [
+      column === "price_minor" ? 777 : true,
+      saleEdition,
+    ]);
+    await db.query(
+      "update public.book_editions set availability='available' where id=$1",
+      [saleEdition],
+    );
+  }
+  for (const sql of [
+    "update public.books set kindle_unlimited=true where slug='4daniel-book-one'",
+    "update public.books set status='draft' where slug='4daniel-book-one'",
+  ]) {
+    await db.exec("reset role");
+    await db.exec(sql);
+    await serviceActor();
+    await assert.rejects(
+      db.query(
+        "select public.commerce_begin_checkout($1,$2,array['4daniel-book-one'],'buyer@example.test',false)",
+        [checkoutId, checkoutHash],
+      ),
+    );
+    await db.exec("reset role");
+    await db.exec(
+      "update public.books set kindle_unlimited=false,status='published' where slug='4daniel-book-one'",
+    );
+  }
+  await serviceActor();
+  await assert.rejects(
+    db.query(
+      "select public.commerce_begin_checkout($1,$2,array['4daniel-book-one','4daniel-book-one'],'buyer@example.test',false)",
+      [checkoutId, checkoutHash],
+    ),
+  );
+  await assert.rejects(
+    db.query(
+      "select public.commerce_begin_checkout($1,$2,array['the-bile-of-the-river'],'buyer@example.test',false)",
+      [checkoutId, checkoutHash],
+    ),
+  );
+});
+test("checkout snapshots catalog prices, binds one session and retries idempotently", async () => {
+  await serviceActor();
+  const begin = () =>
+    db.query<{
+      quote: { subtotal_minor: number; items: { edition_id: string }[] };
+    }>(
+      "select public.commerce_begin_checkout($1,$2,array['4daniel-book-one'],'buyer@example.test',false) as quote",
+      [checkoutId, checkoutHash],
+    );
+  const quote = (await begin()).rows[0].quote;
+  assert.equal(quote.subtotal_minor, 777);
+  assert.equal(quote.items[0].edition_id, saleEdition);
+  await begin();
+  assert.equal(
+    (
+      await db.query<{ n: number }>(
+        "select count(*)::int as n from public.order_items where order_id=$1",
+        [checkoutId],
+      )
+    ).rows[0].n,
+    1,
+  );
+  await assert.rejects(
+    db.query(
+      "select public.commerce_begin_checkout($1,$2,array['4daniel-book-one'],'buyer@example.test',false)",
+      [checkoutId, "d".repeat(64)],
+    ),
+  );
+  await assert.rejects(
+    db.query(
+      "select public.commerce_bind_session($1,$2,'cs_test_archive','https://example.test/checkout')",
+      [checkoutId, checkoutHash],
+    ),
+  );
+  await db.query(
+    "select public.commerce_bind_session($1,$2,'cs_test_archive','https://checkout.stripe.com/c/pay/cs_test_archive')",
+    [checkoutId, checkoutHash],
+  );
+  await assert.rejects(
+    db.query(
+      "select public.commerce_bind_session($1,$2,'cs_test_other','https://checkout.stripe.com/c/pay/cs_test_other')",
+      [checkoutId, checkoutHash],
+    ),
+  );
+  assert.equal(
+    (
+      await db.query<{ id: string }>(
+        "select digital_asset_id as id from public.order_items where order_id=$1",
+        [checkoutId],
+      )
+    ).rows[0].id,
+    saleAsset,
+  );
+  await assert.rejects(
+    db.query("select public.commerce_order_status($1,$2,'cs_test_archive')", [
+      checkoutId,
+      "0".repeat(64),
+    ]),
+  );
+  const beforePayment = (
+    await db.query<{ data: { downloads: unknown[] } }>(
+      "select public.commerce_order_status($1,$2,'cs_test_archive') as data",
+      [checkoutId, checkoutHash],
+    )
+  ).rows[0].data;
+  assert.equal(beforePayment.downloads.length, 0);
+});
+test("webhook persistence rejects mismatches, grants exactly once and ignores stale failure events", async () => {
+  await serviceActor();
+  for (const override of [
+    { subtotal: 1, total: 1 },
+    { tax: 1, total: 777 },
+    { currency: "eur" },
+    { live: true },
+  ])
+    await assert.rejects(payment("evt_rejected", "paid", override));
+  assert.equal((await payment("evt_paid")).rows[0].result, "processed");
+  assert.equal((await payment("evt_paid")).rows[0].result, "duplicate");
+  await payment("evt_paid_again");
+  await payment("evt_expired_late", "expired");
+  const status = (
+    await db.query<{
+      data: { payment_status: string; downloads: { id: string }[] };
+    }>("select public.commerce_order_status($1,$2,'cs_test_archive') as data", [
+      checkoutId,
+      checkoutHash,
+    ])
+  ).rows[0].data;
+  assert.equal(status.payment_status, "paid");
+  assert.equal(status.downloads.length, 1);
+  entitlement = status.downloads[0].id;
+  assert.equal(
+    (
+      await db.query<{ n: number }>(
+        "select count(*)::int as n from public.commerce_email_jobs where order_id=$1 and kind='receipt'",
+        [checkoutId],
+      )
+    ).rows[0].n,
+    1,
+  );
+});
+test("private downloads require the order capability, correct entitlement and a bounded request rate", async () => {
+  await serviceActor();
+  await assert.rejects(
+    db.query("select public.commerce_claim_download($1,$2,$3)", [
+      checkoutId,
+      "e".repeat(64),
+      entitlement,
+    ]),
+  );
+  await assert.rejects(
+    db.query(
+      "select public.commerce_claim_download($1,$2,'ffffffff-0000-4000-8000-000000000001')",
+      [checkoutId, checkoutHash],
+    ),
+  );
+  for (let i = 0; i < 10; i++) {
+    const result = await db.query<{ asset: { path: string } }>(
+      "select public.commerce_claim_download($1,$2,$3) as asset",
+      [checkoutId, checkoutHash, entitlement],
+    );
+    assert.equal(result.rows[0].asset.path, "commerce-fixture/book-one.pdf");
+  }
+  await assert.rejects(
+    db.query("select public.commerce_claim_download($1,$2,$3)", [
+      checkoutId,
+      checkoutHash,
+      entitlement,
+    ]),
+    /retry later/,
+  );
+  const key = "f".repeat(64);
+  for (let i = 0; i < 3; i++)
+    assert.equal(
+      (
+        await db.query<{ ok: boolean }>(
+          "select public.commerce_rate_limit($1,3,60) as ok",
+          [key],
+        )
+      ).rows[0].ok,
+      true,
+    );
+  assert.equal(
+    (
+      await db.query<{ ok: boolean }>(
+        "select public.commerce_rate_limit($1,3,60) as ok",
+        [key],
+      )
+    ).rows[0].ok,
+    false,
+  );
+});
+test("purchase recovery is single-use, expires, rotates access and cannot enumerate orders", async () => {
+  await serviceActor();
+  await db.query(
+    "select public.commerce_request_recovery('nobody@example.test')",
+  );
+  const jobs = (
+    await db.query<{ jobs: ({ job_id: string; order_id: string } | null)[] }>(
+      "select public.commerce_claim_email_jobs() as jobs",
+    )
+  ).rows[0].jobs.filter((job) => job?.order_id === checkoutId);
+  assert.equal(jobs.length, 1);
+  const job = jobs[0]!;
+  await db.query("select public.commerce_issue_recovery($1,$2)", [
+    job.job_id,
+    "1".repeat(64),
+  ]);
+  await db.query("select public.commerce_finish_email($1,true)", [job.job_id]);
+  await db.exec("reset role");
+  await db.query(
+    "update public.purchase_recovery_tokens set expires_at=now()-interval '1 second' where token_hash=$1",
+    ["1".repeat(64)],
+  );
+  await serviceActor();
+  await assert.rejects(
+    db.query("select public.commerce_recover_access($1,$2)", [
+      "1".repeat(64),
+      "2".repeat(64),
+    ]),
+  );
+  await db.exec("reset role");
+  await db.query(
+    "update public.commerce_email_jobs set status='processing' where id=$1",
+    [job.job_id],
+  );
+  await serviceActor();
+  await db.query("select public.commerce_issue_recovery($1,$2)", [
+    job.job_id,
+    "3".repeat(64),
+  ]);
+  const recovered = (
+    await db.query<{ data: { order_id: string } }>(
+      "select public.commerce_recover_access($1,$2) as data",
+      ["3".repeat(64), "4".repeat(64)],
+    )
+  ).rows[0].data;
+  assert.equal(recovered.order_id, checkoutId);
+  await assert.rejects(
+    db.query("select public.commerce_recover_access($1,$2)", [
+      "3".repeat(64),
+      "5".repeat(64),
+    ]),
+  );
+  await assert.rejects(
+    db.query("select public.commerce_order_status($1,$2,'cs_test_archive')", [
+      checkoutId,
+      checkoutHash,
+    ]),
+  );
+  await db.query(
+    "select public.commerce_order_status($1,$2,'cs_test_archive')",
+    [checkoutId, "4".repeat(64)],
+  );
+});
+test("refunds revoke downloads and stale paid events cannot restore access", async () => {
+  await serviceActor();
+  await payment("evt_refund", "refunded");
+  await payment("evt_paid_stale");
+  const state = (
+    await db.query<{ data: { payment_status: string; downloads: unknown[] } }>(
+      "select public.commerce_order_status($1,$2,'cs_test_archive') as data",
+      [checkoutId, "4".repeat(64)],
+    )
+  ).rows[0].data;
+  assert.equal(state.payment_status, "refunded");
+  assert.equal(state.downloads.length, 0);
+  await assert.rejects(
+    db.query("select public.commerce_claim_download($1,$2,$3)", [
+      checkoutId,
+      "4".repeat(64),
+      entitlement,
+    ]),
+  );
+});
+
+test("mixed-currency carts roll back without creating a partial order", async () => {
+  await db.exec("reset role");
+  const edition = (
+    await db.query<{ id: string }>(
+      "select id from public.book_editions where book_id='20000000-0000-4000-8000-000000000002' and sale_channel='direct'",
+    )
+  ).rows[0].id;
+  await db.exec(
+    "insert into storage.objects(bucket_id,name) values('private-ebooks','commerce-fixture/book-two.pdf')",
+  );
+  await db.query(
+    "insert into public.digital_assets(edition_id,storage_path,file_format,file_size,file_checksum,version,status,reviewed_by,created_by) values($1,'commerce-fixture/book-two.pdf','pdf',100,$2,100,'ready',$3,$3)",
+    [edition, "b".repeat(64), identities.owner],
+  );
+  await db.query(
+    "update public.book_editions set availability='available',currency='EUR',price_minor=999,direct_sale_rights_confirmed=true where id=$1",
+    [edition],
+  );
+  await serviceActor();
+  await assert.rejects(
+    db.query(
+      "select public.commerce_begin_checkout('cccccccc-0000-4000-8000-000000000003',$1,array['4daniel-book-one','4daniel-book-two'],'buyer@example.test',false)",
+      [checkoutHash],
+    ),
+    /Mixed currencies/,
+  );
+  assert.equal(
+    (
+      await db.query<{ n: number }>(
+        "select count(*)::int as n from public.orders where id='cccccccc-0000-4000-8000-000000000003'",
+      )
+    ).rows[0].n,
+    0,
+  );
+  await db.exec("reset role");
+  await db.query(
+    "update public.book_editions set availability='pending' where id=$1",
+    [edition],
+  );
+});
+test("disputes revoke a paid order and cannot be undone by a late success", async () => {
+  await serviceActor();
+  const id = "cccccccc-0000-4000-8000-000000000004";
+  await db.query(
+    "select public.commerce_begin_checkout($1,$2,array['4daniel-book-one'],'buyer@example.test',false)",
+    [id, checkoutHash],
+  );
+  await db.query(
+    "select public.commerce_bind_session($1,$2,'cs_test_dispute','https://checkout.stripe.com/c/pay/cs_test_dispute')",
+    [id, checkoutHash],
+  );
+  for (const [event, state] of [
+    ["evt_dispute_paid", "paid"],
+    ["evt_dispute_created", "disputed"],
+    ["evt_dispute_stale", "paid"],
+  ]) {
+    await db.query(
+      "select public.commerce_apply_payment($1,'charge.dispute.created','cs_test_dispute','pi_dispute',false,$2,777,0,777,'usd',$3,'buyer@example.test')",
+      [event, state, id],
+    );
+  }
+  const result = (
+    await db.query<{ data: { access_revoked: boolean; downloads: unknown[] } }>(
+      "select public.commerce_order_status($1,$2,'cs_test_dispute') as data",
+      [id, checkoutHash],
+    )
+  ).rows[0].data;
+  assert.equal(result.access_revoked, true);
+  assert.equal(result.downloads.length, 0);
 });
