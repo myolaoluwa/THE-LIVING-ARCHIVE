@@ -111,7 +111,7 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
     selected.length > 0 &&
     unavailable.length === 0 &&
     currencies.size === 1;
-  const suggestions = enabled && selected.length > 0 && unavailable.length === 0 && currencies.size === 1
+  const suggestions = !checkout && enabled && selected.length > 0 && unavailable.length === 0 && currencies.size === 1
     ? catalog.filter((book) => !slugs.includes(book.slug) && book.currency === selected[0].currency).slice(0, 2)
     : [];
   function addBook(slug: string) {
@@ -125,10 +125,13 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
     setMessage("");
   }
   function remove(slug: string) {
+    if (busy || inFlight.current) return;
     const next = slugs.filter((s) => s !== slug);
     setSlugs(next);
     saveCart(next);
     attempt.current = null;
+    setTerms(false);
+    setMessage("");
   }
   async function pay(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -253,8 +256,8 @@ export function Cart({ checkout = false }: { checkout?: boolean }) {
             </ul>
           </aside>
         )}
-        <Link className="text-link" href="/books">
-          Continue exploring the books →
+        <Link className="text-link" href={checkout ? "/cart" : "/books"}>
+          {checkout ? "← Edit your selection" : "Continue exploring the books →"}
         </Link>
       </section>
       <section
