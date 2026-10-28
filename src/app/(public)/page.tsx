@@ -1,4 +1,6 @@
+import { publicMetadata, jsonLd, siteUrl } from "@/lib/seo";
 import Link from "next/link";
+import { Bookshelf } from "@/components/bookshelf";
 import { SubstackLink } from "@/components/substack-link";
 import {
   getPublicBooks,
@@ -14,6 +16,7 @@ import {
   TextLink,
 } from "@/components/ui";
 import { Arrow, ArchiveMark } from "@/components/icons";
+export const metadata = publicMetadata("/", "Edmund Spencer Katso — The Living Archive", "Explore the books and life of Edmund Spencer Katso. History remembered. Stories preserved.");
 export const revalidate = 60;
 export default async function Home() {
   const [books, home, settings] = await Promise.all([
@@ -25,6 +28,7 @@ export default async function Home() {
     books.find((book) => book.slug === home.featured_book_slug) || books[0];
   return (
     <main id="main">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({ "@context": "https://schema.org", "@type": "Person", name: "Edmund Spencer Katso", url: siteUrl("/about"), image: siteUrl("/images/edmund-katso-enhanced.webp"), jobTitle: "Author, educator and historian" }) }} />
       <section className="hero cinematic-hero" aria-labelledby="hero-title">
         <div className="hero-copy">
           <span className="hero-edition">
@@ -106,12 +110,11 @@ export default async function Home() {
             : `${books.length} published books`}
           , each opening a different door into the African experience.
         </p>
-        <p className="books-row-hint">Scroll to explore all books →</p>
-        <div className="book-grid" data-bookshelf-entrance role="region" aria-label="Author’s bookshelf" tabIndex={0}>
+        <Bookshelf count={books.length} label="Author’s bookshelf" entrance>
           {books.map((book) => (
             <BookCard key={book.slug} book={book} />
           ))}
-        </div>
+        </Bookshelf>
       </section>
       <section className="author-section" aria-labelledby="author-title">
         <div className="container author-grid">

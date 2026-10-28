@@ -6,7 +6,7 @@ test("privacy notice is readable, accessible and reflects the active services", 
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/privacy");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Privacy &\s*site information/);
-    await expect(page.locator("time")).toHaveAttribute("datetime", "2026-10-27");
+    await expect(page.locator("time")).toHaveAttribute("datetime", "2026-10-28");
     await expect(page.locator("article")).not.toContainText("local frontend review");
     await expect(page.getByRole("link", { name: "edmund.katso@gmail.com" }).first()).toHaveAttribute("href", "mailto:edmund.katso@gmail.com");
     await expect(page.getByRole("heading", { name: "Your choices and rights" })).toBeVisible();

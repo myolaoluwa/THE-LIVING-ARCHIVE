@@ -1,10 +1,10 @@
 # The Living Archive
 
-Current connection work: the hosted Supabase schema and four-book catalog are installed and verified. `BACKEND_ENABLED=true` enables anonymous database-backed public content and real administrator authentication; credentials alone do not enable it. New installations default to source-managed mode until their migrations are applied. Stripe Checkout, a persistent ebook cart, verified payment handling, private downloads and transactional-email recovery are implemented locally and disabled pending setup. Newsletter delivery remains unimplemented. See [Stripe setup](docs/STRIPE_SETUP.md). See [connection verification](docs/CONNECTION_VERIFICATION.md) and [administrator setup](docs/PHASE3_SETUP.md).
+Edmund Spencer Katso’s author website and ebook store, built with Next.js App Router, React, strict TypeScript and Supabase.
 
-Edmund Spencer Katso’s author website, with a cinematic editorial frontend and Phase 3 database/admin implementation. Built with Next.js App Router, React, strict TypeScript and Supabase. Live payments and customer ebook delivery remain disabled.
+The hosted Supabase catalog and password-based administrator access are connected. Stripe **test checkout** is enabled on the public domain for the configured test buyer, with private PDFs for Books One, Two and Three. Book Three is US$5.00. The Bile of the River still needs its approved PDF. Live payments remain disabled.
 
-The Supabase project configuration has not been provided. Public pages continue using the approved local content until connected. `/admin/login` explains the missing setup; it does not simulate authentication or saved changes. When configured, public pages read published records anonymously and fail explicitly on database errors.
+The public website includes the four-book horizontal shelf, explicit mobile navigation, approved titles, paperback/hardcover links, an ebook cart, optional selection-stage book offers, and a distinct Stripe security notice. The contact form prepares an email draft; it does not submit enquiries to the website database. Journal content, newsletter collection and analytics remain deferred by owner choice.
 
 ## Run locally
 
@@ -16,32 +16,30 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open http://127.0.0.1:3000. Use `npm run build` and `npm run start` for production review. See [Phase 3 setup and administrator guide](docs/PHASE3_SETUP.md) before connecting a Supabase project. Never configure a service-role key as a public environment variable.
+Keep existing `.env.local` values when the file is already configured. Never commit credentials or private PDFs. Source-managed installations use the approved local catalog. Set `BACKEND_ENABLED=true` only after the Supabase migrations and published content are installed.
 
-## Checks
+## Verification
 
 ```sh
+npm run lint
+npm run typecheck
 npm run test:unit
+npm run test:commerce
 npm run db:check
 npm run build
-npm run typecheck
-npm run lint
 npm run test:e2e
 ```
 
-Database tests execute real migrations and RLS in PGlite PostgreSQL with Supabase auth/storage fixtures. Hosted authentication and Storage are separate pending checks. Browser tests start a production server on port 3100 and use macOS Google Chrome; set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` on other platforms. The browser suite currently targets the unconfigured installation and approved local catalog. Screenshots are written to `docs/review/`; detailed test output is in ignored `playwright-report/`.
+`test:e2e` builds an isolated source-managed installation with checkout disabled, then starts it on port 3100. Browser fixtures cannot use local privileged credentials to write to the hosted project. Browser tests use macOS Google Chrome; set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` on other platforms. `npm run build -- --webpack` is an alternative when the execution environment prevents Turbopack worker-port binding.
 
-## Structure
+Database checks execute real migrations and RLS in PGlite with Supabase auth/storage fixtures. UI fixtures are not evidence of real Stripe payments or Brevo inbox delivery. Hosted checks and release dependencies are recorded separately in the audit report.
 
-- `src/app/(public)/`: approved public layouts, rendered from published records when connected.
-- `src/app/admin/`: authenticated role-protected administration, server actions and editorial styling.
-- `src/lib/database/`, `src/lib/auth/`, `src/lib/storage/`: anonymous catalog reads, verified sessions and file validation.
-- `src/lib/content.ts`, `src/lib/site-content.ts`: approved initial catalog/copy and strict editing schemas.
-- `supabase/migrations/`: five versioned SQL migrations; no production accounts or commerce records seeded.
-- `public/images/`, `public/fonts/`: authentic portrait/covers and licensed self-hosted fonts.
+## Integrations and launch controls
 
-The contact form prepares an email draft only when an approved email is configured; no message is silently submitted. Subscriber acquisition, traffic tracking, journal publishing and live commerce remain later integrations. The review website remains noindex; no deployment has been performed.
+- [Supabase and administrator setup](docs/PHASE3_SETUP.md): active profiles and role-based access; passwords only, as requested by the owner.
+- [Stripe checkout](docs/STRIPE_SETUP.md): server prices, verified webhooks, idempotent fulfillment, revocation and private downloads. Refunds are initiated in Stripe.
+- [Brevo setup](docs/BREVO_SETUP.md): automatic branded receipt/download emails, fresh access links, retries and sender configuration. The hosted audit found the email/recovery migration missing; run `supabase/email_setup.sql` once before Brevo setup. Sending stays disabled until that migration, the verified sender and API key are verified.
+- SEO includes canonical URLs, sharing previews, published-book sitemap, robots rules and author/book structured data. `SEARCH_INDEXING_ENABLED=false` preserves review-stage noindex. Private and checkout pages remain excluded when public indexing is enabled.
+- Keep `LIVE_PAYMENTS_ENABLED=false` until merchant/tax configuration, final legal information and hosted acceptance checks are complete. The purchase-information page is not final approved sales terms.
 
-See [Phase 3 completion report](docs/PHASE3_COMPLETION.md), [setup guide](docs/PHASE3_SETUP.md), [Phase 2 verification](docs/PHASE2_FINAL_VERIFICATION.md) and [design refinement review](docs/REFINEMENT.md). Earlier Phase 0–2 documents are historical records of those review stages.
-
-The [cinematic design upgrade](docs/CINEMATIC_UPGRADE.md) documents the latest visual system, progressive motion, accessibility checks and desktop/tablet/mobile screenshot gallery.
+See [project audit](docs/PROJECT_AUDIT.md) and [commerce readiness](docs/PHASE4_READINESS.md) for the current verified state. Earlier phase reports are historical snapshots.

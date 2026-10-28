@@ -33,5 +33,14 @@ export async function GET(request: Request) {
     p_session: session,
   });
   if (result.error) return reply("Order access unavailable.", 404);
-  return Response.json(result.data, { headers: privateHeaders });
+  let emailDelivery: string = "unavailable";
+  // Read delivery state only after the private order capability is verified.
+  if (result.data?.payment_status === "paid" && !result.data?.access_revoked) {
+    const job = await services.db.from("commerce_email_jobs").select("status")
+      .eq("order_id", order.data.id).eq("kind", "receipt").maybeSingle();
+    if (!job.error && job.data?.status === "sent") emailDelivery = "accepted";
+    else if (!job.error && process.env.TRANSACTIONAL_EMAIL_ENABLED === "true" && process.env.BREVO_API_KEY && process.env.EMAIL_FROM_ADDRESS)
+      emailDelivery = job.data?.status === "failed" ? "failed" : "pending";
+  }
+  return Response.json({ ...result.data, email_delivery: emailDelivery }, { headers: privateHeaders });
 }

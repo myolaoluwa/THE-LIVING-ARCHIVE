@@ -14,7 +14,7 @@ export default async function OrderDetails({
   const order = await client
     .from("orders")
     .select(
-      "id,public_reference,customer_email,customer_name,currency,subtotal_minor,tax_minor,total_minor,payment_status,fulfillment_status,created_at",
+      "id,public_reference,customer_email,customer_name,currency,subtotal_minor,tax_minor,total_minor,payment_status,fulfillment_status,stripe_livemode,created_at",
     )
     .eq("id", id.data)
     .maybeSingle();
@@ -51,6 +51,8 @@ export default async function OrderDetails({
             </dd>
           </div>
           <div>
+            <dt>Mode</dt><dd>{row.stripe_livemode ? "Live payment" : "Stripe test order — no real payment"}</dd>
+          </div><div>
             <dt>Payment</dt>
             <dd>{row.payment_status}</dd>
           </div>
@@ -90,8 +92,7 @@ export default async function OrderDetails({
         ))}
       </section>
       <p className="admin-notice">
-        Refunds, payment reconciliation and access-email resends are not
-        implemented in Phase 3. No manual “mark paid” action is available.
+        Stripe webhooks verify payments and reconcile refunds. Initiate refunds in Stripe. Buyers can request fresh download access on the purchase recovery page once Brevo is configured. No manual “mark paid” action is available.
       </p>
     </main>
   );

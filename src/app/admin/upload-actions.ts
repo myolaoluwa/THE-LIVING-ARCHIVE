@@ -188,7 +188,7 @@ export async function completeUpload(intentId: string): Promise<UploadReply> {
       message:
         intent.kind === "cover"
           ? "Cover saved privately. Select it in the book draft, then publish the book to make the cover public."
-          : "Ebook stored privately as a new version. It requires explicit file review before it can be marked ready. Paid delivery remains disabled.",
+          : "Ebook stored privately as a new version. Review this file before marking it ready, then configure the matching direct ebook edition.",
     };
   } catch (error) {
     if (!finalized) {

@@ -44,6 +44,7 @@ export async function deliverEmailBatch() {
         titles: job.items,
         amount: `${new Intl.NumberFormat("en-US", { style: "currency", currency: job.currency }).format(job.total_minor / 100)} ${job.currency}`,
         accessUrl: `${s.config.origin}/order/recover#token=${token}`,
+        recoveryUrl: `${s.config.origin}/order/recover`,
         support: env.contactEmail,
         receipt: job.kind === "receipt",
         testMode: !s.config.live,
@@ -63,10 +64,15 @@ export async function deliverEmailBatch() {
           subject: message.subject,
           htmlContent: message.html,
           textContent: message.text,
+          ...(env.contactEmail ? { replyTo: { email: env.contactEmail, name: "Edmund Spencer Katso" } } : {}),
+          tags: [job.kind === "receipt" ? "ebook-purchase" : "ebook-recovery", s.config.live ? "live" : "test"],
         }),
         signal: AbortSignal.timeout(15000),
       });
-      success = response.ok;
+      // Acceptance by Brevo is not proof of inbox delivery. Never mark an
+      // unacknowledged response as sent; failed jobs remain eligible for retry.
+      const accepted = response.ok ? await response.json() : null;
+      success = typeof accepted?.messageId === "string" && accepted.messageId.length > 0;
     } catch {}
     const finished = await s.db.rpc("commerce_finish_email", {
       p_job: job.job_id,

@@ -1,13 +1,10 @@
+import { publicMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 import { Eyebrow } from "@/components/ui";
 import { ContactForm } from "@/components/contact-form";
 import { env } from "@/config/env";
 import { getPublicPage, getPublicSettings } from "@/lib/database/catalog";
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Enquiries about Edmund Spencer Katso’s books, media interviews, academic conversations and book clubs.",
-};
+export const metadata: Metadata = publicMetadata("/contact", "Contact", "Enquiries about Edmund Spencer Katso’s books, media interviews, academic conversations and book clubs.");
 export const revalidate = 60;
 export default async function ContactPage() {
   const [contact, settings] = await Promise.all([

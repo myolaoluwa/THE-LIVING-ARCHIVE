@@ -7,8 +7,9 @@ test("public editorial pages reuse ISR while administrator pages remain private"
     const first = await request.get(route);
     expect(first.status()).toBe(200);
     expect(first.headers()["cache-control"]).toContain("s-maxage=60");
-    const repeated = await request.get(route);
-    expect(repeated.headers()["x-nextjs-cache"]).toBe("HIT");
+    // An expired ISR entry can legitimately return STALE while regeneration
+    // finishes. Verify it settles to HIT instead of racing that background work.
+    await expect.poll(async () => (await request.get(route)).headers()["x-nextjs-cache"]).toBe("HIT");
   }
   const admin = await request.get("/admin/login");
   expect(admin.headers()["cache-control"]).toContain("no-store");

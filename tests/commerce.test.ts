@@ -141,6 +141,7 @@ test("receipt HTML escapes titles and uses a private single-use recovery link", 
     titles: ['<script>alert("x")</script>'],
     amount: "$7.77 USD",
     accessUrl: "https://example.test/order/recover#token=secret",
+    recoveryUrl: "https://example.test/order/recover",
     support: "support@example.test",
     receipt: true,
     testMode: true,
@@ -149,5 +150,8 @@ test("receipt HTML escapes titles and uses a private single-use recovery link", 
   assert.ok(email.html.includes("&lt;script&gt;"));
   assert.ok(email.subject.startsWith("[TEST]"));
   assert.ok(email.text.includes("expires in 30 minutes"));
+  assert.ok(email.text.includes("Link expired or already used?"));
+  assert.ok(email.html.includes("Download your ebooks"));
+  assert.ok(email.html.includes('href="https://example.test/order/recover"'));
   assert.ok(!email.html.includes("/storage/v1/object/public/"));
 });

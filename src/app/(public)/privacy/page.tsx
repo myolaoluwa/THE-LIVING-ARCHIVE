@@ -1,7 +1,9 @@
+import { siteUrl } from "@/lib/seo";
 import type { Metadata } from "next";
 import { Eyebrow } from "@/components/ui";
 import { env } from "@/config/env";
 export const metadata: Metadata = {
+  alternates: { canonical: siteUrl("/privacy") },
   title: "Privacy & Site Information",
   description: "How The Living Archive handles website visits, email enquiries, cookies and external purchase links. Contact Edmund Spencer Katso about your privacy.",
 };

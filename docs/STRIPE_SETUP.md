@@ -44,6 +44,8 @@ Use a test buyer email you control; test checkout only accepts this configured a
 
 ## Transactional email
 
+See [BREVO_SETUP.md](BREVO_SETUP.md) for the author’s account setup, verified sender, automatic ebook emails and retry schedule. A daily Vercel backup schedule is prepared in `vercel.json`; it becomes active on deployment. Immediate delivery starts from the payment webhook.
+
 The build plan proposes Brevo. Set `BREVO_API_KEY`, a verified `EMAIL_FROM_ADDRESS`, and `EMAIL_FROM_NAME`. Then set `TRANSACTIONAL_EMAIL_ENABLED=true`. No newsletter is implemented or implied by purchases. Test receipt subjects start `[TEST]`; only the configured test buyer can initiate test checkout.
 
 Receipts are queued transactionally when an order first becomes paid. The application attempts delivery after the webhook response. Recovery requests also trigger delivery. Failed email attempts stay in the durable queue with backoff; five attempts exhaust a job. To retry independently of traffic, configure an authorized scheduler to call:

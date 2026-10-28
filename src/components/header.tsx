@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { subscribeCart, cartCount, emptyCartCount } from "@/lib/commerce/cart-storage";
 import { ArchiveMark, Arrow } from "./icons";
 const links = [
   { href: "/", label: "Home" },
@@ -11,6 +12,7 @@ const links = [
   { href: "/cart", label: "Ebook cart" },
 ];
 export function Header() {
+  const count = useSyncExternalStore(subscribeCart, cartCount, emptyCartCount);
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -68,6 +70,7 @@ export function Header() {
                 aria-current={active(link.href) ? "page" : undefined}
               >
                 {link.label}
+                {link.href === "/cart" && count > 0 && <span className="cart-count" aria-label={`${count} ebooks in cart`}>{count}</span>}
               </Link>
             ))}
           </nav>
@@ -126,6 +129,7 @@ export function Header() {
             >
               <small>0{i + 1}</small>
               {link.label}
+              {link.href === "/cart" && count > 0 && <span className="cart-count" aria-label={`${count} ebooks in cart`}>{count}</span>}
               <Arrow diagonal />
             </Link>
           ))}

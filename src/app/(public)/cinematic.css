@@ -2158,3 +2158,27 @@
   line-height: 1.15;
   text-wrap: pretty;
 }
+
+/* Explicit navigation and a partial next card make the single-row shelf discoverable. */
+.public-site .bookshelf { min-width: 0; }
+.public-site .bookshelf-navigation { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 28px 0 18px; }
+.public-site .bookshelf-navigation strong { font-size: 14px; color: #244736; }
+.public-site .bookshelf-navigation p { margin: 6px 0 0; font-size: 12px; line-height: 1.5; color: #53584d; }
+.public-site .bookshelf-controls { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+.public-site .bookshelf-position { font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; margin-right: 5px; color: #53584d; }
+.public-site .bookshelf-controls button { width: 44px; height: 44px; border: 1px solid #244736; background: #244736; color: #fffaf0; font-size: 22px; cursor: pointer; border-radius: 50%; }
+.public-site .bookshelf-controls button:disabled { background: transparent; color: #73796a; border-color: #b5baaa; cursor: default; }
+.public-site .bookshelf-controls button:focus-visible { outline: 3px solid #9b581c; outline-offset: 4px; }
+.public-site .bookshelf .book-grid { margin-top: 0; }
+@media (max-width: 600px) {
+  .public-site .bookshelf .book-grid { grid-auto-columns: min(74vw, 320px); gap: 18px; }
+  .public-site .bookshelf-navigation { align-items: flex-start; gap: 12px; }
+  .public-site .bookshelf-navigation strong { font-size: 13px; }
+  .public-site .bookshelf-navigation p { max-width: 155px; }
+  .public-site .bookshelf-controls { gap: 6px; }
+  .public-site .bookshelf-controls button { width: 44px; height: 44px; }
+  .public-site .bookshelf-position { margin-right: 0; }
+}
+
+.public-site .cart-count { display: inline-flex; align-items: center; justify-content: center; min-width: 21px; height: 21px; padding: 0 5px; margin-left: 6px; border-radius: 50%; background: #244736; color: #fffaf0; font: 11px/1 var(--sans, sans-serif); vertical-align: middle; }
+.public-site .mobile-dialog .cart-count { font-size: 13px; min-width: 26px; height: 26px; }

@@ -1,11 +1,9 @@
+import { publicMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
+import { Bookshelf } from "@/components/bookshelf";
 import { getPublicBooks } from "@/lib/database/catalog";
 import { BookCard, Eyebrow, TextLink } from "@/components/ui";
-export const metadata: Metadata = {
-  title: "The Books",
-  description:
-    "Discover the three-volume 4Daniel series and The Bile of the River by Edmund Spencer Katso.",
-};
+export const metadata: Metadata = publicMetadata("/books", "The Books", "Discover the three-volume 4Daniel series and The Bile of the River by Edmund Spencer Katso.");
 export const revalidate = 60;
 export default async function BooksPage() {
   const books = await getPublicBooks();
@@ -38,12 +36,11 @@ export default async function BooksPage() {
         className="container collection-section"
         aria-label="The book collection"
       >
-        <p className="books-row-hint">Scroll to explore all books →</p>
-        <div className="book-grid" role="region" aria-label="All books" tabIndex={0}>
+        <Bookshelf count={books.length} label="All books">
           {books.map((book, index) => (
             <BookCard key={book.slug} book={book} priority={index === 0} />
           ))}
-        </div>
+        </Bookshelf>
         <div className="collection-note">
           <Eyebrow>A note on the series</Eyebrow>
           <p>

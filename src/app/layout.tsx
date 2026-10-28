@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { env } from "@/config/env";
+import { searchIndexingEnabled } from "@/lib/seo";
 import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(env.siteUrl),
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
   },
   description:
     "Explore the books and life of Edmund Spencer Katso, Zimbabwean-born author, educator and historian. History remembered. Stories preserved.",
-  robots: { index: false, follow: false },
+  robots: { index: searchIndexingEnabled, follow: searchIndexingEnabled },
   openGraph: {
     type: "website",
     siteName: "The Living Archive",

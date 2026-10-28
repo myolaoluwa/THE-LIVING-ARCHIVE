@@ -8,32 +8,9 @@ import { books as bookDetails } from "@/lib/content";
 import { PurchaseSteps } from "./purchase-steps";
 import { PaymentSecurityNotice } from "./payment-security-notice";
 
-export function readCart(): string[] {
-  try {
-    const encoded = document.cookie
-      .split("; ")
-      .find((v) => v.startsWith("archive_cart="))
-      ?.split("=")
-      .slice(1)
-      .join("=");
-    const value = encoded ? JSON.parse(decodeURIComponent(encoded)) : [];
-    return Array.isArray(value)
-      ? [
-          ...new Set(
-            value.filter(
-              (s): s is string =>
-                typeof s === "string" && /^[a-z0-9-]{1,120}$/.test(s),
-            ),
-          ),
-        ].slice(0, 4)
-      : [];
-  } catch {
-    return [];
-  }
-}
-export function saveCart(slugs: string[]) {
-  document.cookie = `archive_cart=${encodeURIComponent(JSON.stringify(slugs))}; Path=/; Max-Age=2592000; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
-}
+import { readCart, saveCart } from "@/lib/commerce/cart-storage";
+export { readCart, saveCart } from "@/lib/commerce/cart-storage";
+
 export function formatPrice(amount: number, currency: string) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(
     amount / 100,

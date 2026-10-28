@@ -45,7 +45,7 @@ test("Core publishing and discovery remain usable without JavaScript", async ({
     .getByRole("link", { name: "View book", exact: true })
     .first()
     .click();
-  await expect(page.locator("h1")).toHaveText("4Daniel");
+  await expect(page.locator("h1")).toHaveText("A Precolonial History and My Life History in Rhodesia and Zimbabwe");
   await expect(
     page.getByRole("button", { name: "Buy ebook directly" }),
   ).toBeDisabled();

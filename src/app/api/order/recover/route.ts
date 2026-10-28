@@ -10,6 +10,7 @@ import {
   sameOrigin,
 } from "@/lib/commerce/server";
 export const runtime = "nodejs";
+export const maxDuration = 60;
 const generic = () =>
   Response.json(
     {

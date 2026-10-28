@@ -968,3 +968,5 @@
   border-color: #bbb3a5;
   transform: none;
 }
+
+.admin-order-mode { display: block; margin-top: 6px; font-size: 11px; color: #5b6253; }

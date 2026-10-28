@@ -6,6 +6,8 @@ import { BookCard, BookCover, Eyebrow } from "@/components/ui";
 import { BookEditions } from "@/components/book-editions";
 import { ShareButton } from "@/components/share-button";
 import { bookDisplayTitle } from "@/lib/book-display";
+import { Bookshelf } from "@/components/bookshelf";
+import { publicMetadata, jsonLd, siteUrl } from "@/lib/seo";
 export const revalidate = 60;
 // Render new published slugs on first visit, then reuse the ISR page cache.
 export async function generateStaticParams() {
@@ -20,12 +22,7 @@ export async function generateMetadata({
   const books = await getPublicBooks();
   const book = books.find((b) => b.slug === slug);
   if (!book) notFound();
-  return {
-    title:
-      book.seoTitle ||
-      `${bookDisplayTitle(book)}${book.series ? ` — ${book.series.split(" · ")[1]}` : ""}`,
-    description: book.seoDescription || book.description,
-  };
+  return publicMetadata(`/books/${book.slug}`, book.seoTitle || bookDisplayTitle(book), book.seoDescription || book.description);
 }
 export default async function BookPage({
   params,
@@ -39,6 +36,12 @@ export default async function BookPage({
   const displayTitle = bookDisplayTitle(book);
   return (
     <main id="main" className="book-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({
+        "@context": "https://schema.org", "@graph": [
+          { "@type": "Book", name: displayTitle, description: book.description, url: siteUrl(`/books/${book.slug}`), image: siteUrl(book.cover), inLanguage: "en", author: { "@type": "Person", name: "Edmund Spencer Katso", url: siteUrl("/about") } },
+          { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: siteUrl("/") }, { "@type": "ListItem", position: 2, name: "The books", item: siteUrl("/books") }, { "@type": "ListItem", position: 3, name: displayTitle, item: siteUrl(`/books/${book.slug}`) }] },
+        ],
+      }) }} />
       <div className="container">
         <nav aria-label="Breadcrumb" className="breadcrumb">
           <Link href="/">Home</Link>
@@ -105,14 +108,13 @@ export default async function BookPage({
               </h2>
             </div>
           </div>
-          <p className="books-row-hint">Scroll to explore more books →</p>
-          <div className="book-grid related-grid" role="region" aria-label="More books" tabIndex={0}>
+          <Bookshelf count={books.length - 1} label="More books" related>
             {books
               .filter((b) => b.slug !== slug)
               .map((b) => (
                 <BookCard key={b.slug} book={b} />
               ))}
-          </div>
+          </Bookshelf>
         </section>
       </div>
     </main>

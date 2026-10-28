@@ -115,10 +115,9 @@ export default async function Dashboard({
         </section>
         <section className="admin-panel">
           <p className="eyebrow">Integration status</p>
-          <h2>Commerce comes next.</h2>
+          <h2>Payments and delivery.</h2>
           <p>
-            Live payments, customer download delivery and receipt emails are not
-            enabled in Phase 3. No order or revenue figures are simulated.
+            Stripe checkout and private downloads are implemented. The current release uses Stripe test mode; live activation and automatic emails depend on the verified merchant, tax and Brevo settings.
           </p>
           {metrics?.paid_totals.length ? (
             <ul>
@@ -128,12 +127,12 @@ export default async function Dashboard({
                     style: "currency",
                     currency: total.currency,
                   }).format(total.amount_minor / 100)}{" "}
-                  · {total.order_count} paid orders
+                  · {total.order_count} recorded paid orders (includes test orders)
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="admin-help">No paid order totals are recorded.</p>
+            <p className="admin-help">No paid order totals are recorded. Test orders never represent real revenue.</p>
           )}
           <p className="admin-help">
             Newsletter acquisition, public enquiry delivery and traffic

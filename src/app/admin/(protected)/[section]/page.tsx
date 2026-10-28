@@ -269,7 +269,7 @@ export default async function AdminSection({
       orders: {
         table: "orders",
         columns:
-          "id,public_reference,customer_email,currency,total_minor,payment_status,fulfillment_status,created_at",
+          "id,public_reference,customer_email,currency,total_minor,payment_status,fulfillment_status,stripe_livemode,created_at",
         order: "created_at",
       },
       customers: {
@@ -311,13 +311,13 @@ export default async function AdminSection({
     const count = result.count || 0;
     const notice =
       section === "orders"
-        ? "Payments, refunds, reconciliation and access-email delivery are Phase 4 features. Order records here are read-only."
+        ? "Stripe verifies payments and synchronizes refunds. Test orders are labelled below. Order records are read-only; manage refunds in Stripe. Download emails require the configured Brevo sender."
         : section === "enquiries"
           ? "The public contact form does not submit messages to this database yet. Notification delivery is a later integration."
           : section === "subscribers"
             ? "Newsletter sign-up and double-opt-in delivery are later-phase features. Consent records cannot be fabricated here."
             : section === "customers"
-              ? "Customer records are created by later commerce workflows. No customer accounts or sample buyers are generated."
+              ? "Customer records are created by verified ebook purchases. Checkout is guest-based; no customer accounts or sample buyers are generated."
               : "This append-only log records actor, operation and changed field names. It does not copy customer messages, secret keys or signed file URLs.";
     body = (
       <>
@@ -413,6 +413,7 @@ export default async function AdminSection({
                           >
                             {field(row, "public_reference")}
                           </Link>
+                          <small className="admin-order-mode">{row.stripe_livemode ? "Live order" : "Test order"}</small>
                         </td>
                         <td>{field(row, "customer_email")}</td>
                         <td>

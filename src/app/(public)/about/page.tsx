@@ -1,11 +1,8 @@
+import { publicMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 import { getPublicPage } from "@/lib/database/catalog";
 import { ButtonLink, Eyebrow, Portrait } from "@/components/ui";
-export const metadata: Metadata = {
-  title: "The Author",
-  description:
-    "Meet Edmund Spencer Katso: Zimbabwean-born author, educator and historian, from a life in education to a life in literature.",
-};
+export const metadata: Metadata = publicMetadata("/about", "The Author", "Meet Edmund Spencer Katso: Zimbabwean-born author, educator and historian, from a life in education to a life in literature.");
 export const revalidate = 60;
 export default async function AboutPage() {
   const about = await getPublicPage("about");

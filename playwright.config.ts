@@ -16,6 +16,8 @@ export default defineConfig({
   reporter: [["list"], ["html", { open: "never" }]],
   webServer: {
     command: "npm run start -- --port 3100",
+    // Deterministic source-mode regressions never use hosted admin or payment credentials.
+    env: { BACKEND_ENABLED: "false", COMMERCE_ENABLED: "false" },
     url: "http://127.0.0.1:3100",
     reuseExistingServer: false,
     timeout: 60000,

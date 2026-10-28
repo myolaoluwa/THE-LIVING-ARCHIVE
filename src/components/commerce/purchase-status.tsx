@@ -13,6 +13,7 @@ type Status = {
   currency: string;
   total_minor: number;
   downloads: { id: string; title: string }[];
+  email_delivery?: "accepted" | "pending" | "failed" | "unavailable";
 };
 export function PurchaseStatus() {
   const params = useSearchParams();
@@ -53,6 +54,8 @@ export function PurchaseStatus() {
           saveCart(
             readCart().filter((slug) => !data.purchased_slugs?.includes(slug)),
           );
+          if (data.email_delivery === "pending" && ++checks < 10)
+            timer = setTimeout(check, 3000);
           return;
         }
         if (
@@ -99,6 +102,15 @@ export function PurchaseStatus() {
           : "Purchase confirmation"}
       </h2>
       <p role="status" className={`commerce-message ${confirmed ? "commerce-success" : "commerce-warning"}`}><span aria-hidden="true">{confirmed ? "✓ " : "! "}</span>{message}</p>
+      {confirmed && order?.email_delivery === "accepted" && (
+        <p className="commerce-notice">Your download email is on its way. Check your inbox and spam folder. You can also download your ebooks below.</p>
+      )}
+      {confirmed && order?.email_delivery === "pending" && (
+        <p className="commerce-notice">We’re preparing your download email. You can download your ebooks below while it’s being sent.</p>
+      )}
+      {confirmed && order?.email_delivery === "failed" && (
+        <p className="commerce-message commerce-warning">Your payment is confirmed, but the download email could not be sent. Download your ebooks below, or contact the author for help.</p>
+      )}
       {order && (
         <>
           <dl className="commerce-order-details">

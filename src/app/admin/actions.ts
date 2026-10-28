@@ -394,7 +394,7 @@ export async function reviewAsset(
     revalidatePath("/admin/assets");
     return {
       success: true,
-      message: "File review status saved. Paid delivery is not enabled.",
+      message: "File review status saved. Checkout also requires an available direct edition with confirmed rights and a positive price.",
     };
   } catch (error) {
     return fail(error);

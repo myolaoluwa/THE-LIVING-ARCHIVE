@@ -5,7 +5,7 @@ test("direct ebook prices remain visible without Amazon ebook links", async ({ p
     ["4daniel-book-one", "$7.77"],
     ["4daniel-book-two", "$9.99"],
     ["the-bile-of-the-river", "$6.93"],
-    ["4daniel-book-three", "$0.00"],
+    ["4daniel-book-three", "$5.00"],
   ];
   for (const [slug, price] of prices) {
     await page.goto(`/books/${slug}`);
@@ -14,7 +14,7 @@ test("direct ebook prices remain visible without Amazon ebook links", async ({ p
     await expect(direct.getByRole("button", { name: "Buy ebook directly" })).toBeDisabled();
     await expect(page.getByRole("link", { name: /Kindle.*Amazon/ })).toHaveCount(0);
     if (slug === "4daniel-book-three") {
-      await expect(direct).toContainText("not a free download offer");
+      await expect(direct).not.toContainText("not a free download offer");
       await expect(page.locator('a[download], a[href*="/downloads/"]')).toHaveCount(0);
     }
   }

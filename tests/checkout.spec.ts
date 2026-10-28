@@ -148,6 +148,7 @@ test("Optional ebook offers appear only during selection and totals persist into
   await page.getByRole("button", { name: `Add ${books[1].title} for $9.99 USD`, exact: true }).click();
   await expect(page.locator(".commerce-total")).toContainText("$17.76");
   await expect(page.locator(".commerce-items li")).toHaveCount(2);
+  await expect(page.locator(".desktop-nav .cart-count")).toHaveText("2");
   await expect(page.locator(".commerce-recommendations")).not.toContainText(books[1].title);
   await page.getByRole("link", { name: "Proceed to checkout" }).click();
   await expect(page.locator(".commerce-recommendations")).toHaveCount(0);
@@ -184,4 +185,24 @@ test("Book detail pages use the approved full titles at mobile and desktop width
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
   }
+});
+
+test("Confirmed purchases show email progress without blocking private downloads", async ({ page }) => {
+  // UI-only delivery states; no email is sent and no order is created.
+  let calls = 0;
+  let failed = false;
+  await page.route("**/api/checkout/status?*", route => route.fulfill({ json: {
+    id: "20000000-0000-4000-8000-000000000001", reference: "LA-test-email",
+    payment_status: "paid", access_revoked: false, purchased_slugs: [], currency: "USD", total_minor: 777,
+    downloads: [{ id: "20000000-0000-4000-8000-000000000002", title: "A Precolonial History and My Life History in Rhodesia and Zimbabwe" }],
+    email_delivery: failed ? "failed" : ++calls === 1 ? "pending" : "accepted",
+  } }));
+  await page.goto("/checkout/success?session_id=cs_test_email_preview");
+  await expect(page.getByText(/We’re preparing your download email/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Download ebook" })).toBeVisible();
+  await expect(page.getByText(/Your download email is on its way/)).toBeVisible({ timeout: 10000 });
+  failed = true;
+  await page.getByRole("button", { name: "Check confirmation again" }).click();
+  await expect(page.getByText(/download email could not be sent/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Download ebook" })).toBeVisible();
 });

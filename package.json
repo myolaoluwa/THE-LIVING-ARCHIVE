@@ -8,13 +8,14 @@
     "start": "next start --hostname 127.0.0.1",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test:e2e": "playwright test",
+    "test:e2e": "npm run build:test && playwright test",
     "db:check": "node scripts/check-migrations.mjs && npm run test:db",
     "test:db": "node --import tsx --test tests/database.test.ts tests/checkout-setup.test.ts",
     "test:unit": "node --import tsx --test tests/validation.test.ts",
     "db:seed:generate": "node --import tsx scripts/generate-verified-seed.ts",
     "test:commerce": "node --import tsx --test tests/commerce.test.ts",
-    "ebooks:upload": "node --import tsx scripts/upload-approved-ebooks.ts"
+    "ebooks:upload": "node --import tsx scripts/upload-approved-ebooks.ts",
+    "build:test": "node scripts/build-browser-tests.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
