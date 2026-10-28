@@ -79,6 +79,13 @@ export default function PrivacyPage() {
           </p>
           <h2>Book purchases and external links</h2>
           <p>
+            Published book information and website content are stored with
+            Supabase and read by the website’s server. Browsing the public book
+            pages does not create a Supabase reader account or submit contact-form
+            entries to that service. Authorized site administrators may use
+            separate sign-in and necessary session cookies to manage the site.
+          </p>
+          <p>
             Amazon purchase links take you to Amazon, where its own privacy,
             payment and delivery terms apply. This website does not receive your
             Amazon card details or order information through those links.

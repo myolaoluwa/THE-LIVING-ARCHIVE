@@ -20,6 +20,7 @@ export const rowSchema = z.object({
   source_url: z.string(),
   status: z.string(),
   featured: z.boolean(),
+  kindle_unlimited: z.boolean().optional().default(false),
 });
 export const editionRow = z.object({
   book_id: z.uuid(),
@@ -28,6 +29,8 @@ export const editionRow = z.object({
   availability: z.enum(["pending", "available", "unavailable"]),
   external_purchase_url: z.string().nullable(),
   link_verified: z.boolean(),
+  price_minor: z.number().int().nonnegative().nullable().optional(),
+  currency: z.string().nullable().optional(),
 });
 export type CatalogBookRow = z.infer<typeof rowSchema>;
 export type CatalogEdition = z.infer<typeof editionRow>;
@@ -47,6 +50,7 @@ export function catalogBook(
         e.availability === "available" &&
         e.link_verified,
     )?.external_purchase_url || "";
+  const direct = editions.find((e) => e.book_id === row.id && e.format === "ebook" && e.sale_channel === "direct");
   return {
     seoTitle: row.seo_title || undefined,
     seoDescription: row.seo_description || undefined,
@@ -59,7 +63,7 @@ export function catalogBook(
     category: row.genre,
     series:
       series && row.series_position
-        ? `${series} · Book ${row.series_position === 1 ? "One" : row.series_position === 2 ? "Two" : row.series_position}`
+        ? `${series} · Book ${row.series_position === 1 ? "One" : row.series_position === 2 ? "Two" : row.series_position === 3 ? "Three" : row.series_position}`
         : undefined,
     cover: row.cover_asset_id
       ? `/media/covers/${row.cover_asset_id}`
@@ -84,5 +88,10 @@ export function catalogBook(
     ],
     amazonEbook: available("ebook"),
     amazonHardcover: available("hardcover"),
+    amazonPaperback: available("paperback"),
+    ebookPrice: direct?.price_minor != null && direct.currency === "USD"
+      ? { amountMinor: direct.price_minor, currency: "USD" }
+      : undefined,
+    kindleUnlimited: row.kindle_unlimited,
   };
 }

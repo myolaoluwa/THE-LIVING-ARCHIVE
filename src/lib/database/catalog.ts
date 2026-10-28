@@ -23,7 +23,7 @@ export const getPublicBooks = cache(async (): Promise<Book[]> => {
     db
       .from("book_editions")
       .select(
-        "book_id,format,sale_channel,availability,external_purchase_url,link_verified",
+        "book_id,format,sale_channel,availability,external_purchase_url,link_verified,price_minor,currency",
       ),
     db.from("book_series").select("id,name"),
     db.from("media_assets").select("id,width,height"),
@@ -45,7 +45,7 @@ export const getPublicBooks = cache(async (): Promise<Book[]> => {
       editionRows,
       String(index + 1).padStart(2, "0"),
       seriesRows.find((s) => s.id === row.series_id)?.name,
-      asset ? `${asset.width} / ${asset.height}` : undefined,
+      asset ? `${asset.width} / ${asset.height}` : approvedBooks.find((book) => book.cover === row.cover_path)?.coverRatio,
     );
   });
 });

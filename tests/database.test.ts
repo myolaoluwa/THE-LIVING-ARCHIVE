@@ -52,6 +52,8 @@ before(async () => {
     .sort();
   for (const file of files)
     await db.exec(await readFile(`supabase/migrations/${file}`, "utf8"));
+  // The manual catalog reconciliation is safe to repeat without duplicating books.
+  await db.exec(await readFile("supabase/migrations/20261028000100_current_catalog.sql", "utf8"));
   for (const [role, id] of Object.entries(identities)) {
     await db.query("insert into auth.users(id) values($1)", [id]);
     if (role !== "outsider")
@@ -66,7 +68,14 @@ after(async () => {
 });
 test("migrations create the verified collection and no commercial fiction", async () => {
   await actor("anon");
-  assert.equal(await count("books"), 3);
+  assert.equal(await count("books"), 4);
+  const synced = (await db.query<{slug:string;price_minor:number;currency:string;availability:string;direct_sale_rights_confirmed:boolean}>(
+    "select b.slug,e.price_minor,e.currency,e.availability,e.direct_sale_rights_confirmed from public.books b join public.book_editions e on e.book_id=b.id where e.sale_channel='direct' order by b.display_order",
+  )).rows;
+  assert.deepEqual(synced.map((row) => row.price_minor), [777,999,693,0]);
+  assert.ok(synced.every((row) => row.currency === "USD" && row.availability === "pending" && !row.direct_sale_rights_confirmed));
+  const paperbacks = (await db.query<{external_product_identifier:string}>("select external_product_identifier from public.book_editions where format='paperback' order by external_product_identifier")).rows;
+  assert.deepEqual(paperbacks.map((row) => row.external_product_identifier), ["B0CYVNQJ4M","B0FQP4FZ58","B0H4CRDM47"]);
   await actor("owner");
   assert.equal(await count("orders"), 0);
   assert.equal(await count("customers"), 0);
@@ -101,7 +110,7 @@ test("anonymous and authenticated nonstaff cannot read private records or write 
 });
 test("MFA is required by PostgreSQL, even with a valid owner profile", async () => {
   await actor("owner", "aal1");
-  assert.equal(await count("books"), 3);
+  assert.equal(await count("books"), 4);
   await assert.rejects(
     db.exec(
       "insert into public.books(slug,title) values('without-mfa','Without MFA')",
@@ -443,7 +452,7 @@ test("real published PostgreSQL records render the confirmed catalog and keep ch
   const editions = z
     .array(editionRow)
     .parse((await db.query("select * from public.book_editions")).rows);
-  assert.equal(rows.length, 3);
+  assert.equal(rows.length, 4);
   for (const [index, row] of rows.entries()) {
     const book = catalogBook(
       row,
@@ -452,6 +461,13 @@ test("real published PostgreSQL records render the confirmed catalog and keep ch
       row.series_id ? "4Daniel" : undefined,
     );
     assert.equal(book.title, row.title);
+    if (row.slug === "4daniel-book-three") {
+      assert.equal(book.series, "4Daniel · Book Three");
+      assert.equal(book.kindleUnlimited, true);
+      assert.deepEqual(book.ebookPrice, { amountMinor: 0, currency: "USD" });
+    } else {
+      assert.ok(book.amazonPaperback?.startsWith("https://www.amazon.com/dp/"));
+    }
     assert.ok(book.cover.startsWith("/images/"));
     const markup = renderToStaticMarkup(createElement(BookEditions, { book }));
     assert.ok(markup.includes(book.amazonEbook));

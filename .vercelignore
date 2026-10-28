@@ -1,0 +1,6 @@
+.env*
+!.env.example
+.git/
+docs/review/
+playwright-report/
+test-results/

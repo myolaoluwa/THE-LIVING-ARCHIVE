@@ -1,6 +1,8 @@
 # Phase 3 setup and administrator guide
 
-Backend implementation is currently postponed. The public website is source-managed. To resume this guide later, complete migrations and security setup before explicitly setting `BACKEND_ENABLED=true`. Supabase credentials alone no longer enable the backend.
+The hosted schema and catalog have now been verified. `BACKEND_ENABLED=true` deliberately enables database-backed pages and administrator authentication once setup is ready. Supabase credentials alone do not enable the backend. First-owner provisioning, MFA and hosted private-storage acceptance remain separate steps below; no account is seeded.
+
+Connection update, 2026-10-28: the owner reports the original five migrations completed successfully, and anonymous hosted queries confirm the original catalog is installed. Before enabling database-backed pages, also run `supabase/migrations/20261028000100_current_catalog.sql` to add the fourth book, paperback editions, approved USD prices, Kindle Unlimited notes and contact email. Direct editions remain pending and no sale rights or private files are created. The public adapter now preserves these fields. Hosted owner authentication and Storage acceptance checks are still pending.
 
 Implementation is local. No hosted Supabase project has been connected or migrated. The owner has elected to supply configuration later. This guide describes the remaining setup; it is not a record of completed remote operations.
 
