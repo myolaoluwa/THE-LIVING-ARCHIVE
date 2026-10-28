@@ -8,8 +8,7 @@ import { signIn } from "../auth-actions";
 export default async function LoginPage() {
   const configured = !!databaseConfig();
   const session = configured ? await adminSession() : null;
-  if (session)
-    redirect(session.aal === "aal2" ? "/admin/dashboard" : "/admin/mfa");
+  if (session) redirect("/admin/dashboard");
   return (
     <main id="main" className="admin-auth">
       <Link href="/" className="brand">
@@ -24,8 +23,7 @@ export default async function LoginPage() {
         {configured ? (
           <>
             <p>
-              Sign in to manage your books and website. An authenticator code is
-              required after sign-in.
+              Sign in with your email and password to manage your books and website.
             </p>
             <ActionForm action={signIn} label="Sign in">
               <label htmlFor="email">Email address</label>

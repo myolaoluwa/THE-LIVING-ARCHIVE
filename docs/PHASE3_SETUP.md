@@ -1,17 +1,17 @@
+> Authentication update, 2026-10-28: password-only administrator access is implemented locally. The new password-access migration must be applied to Supabase and the application deployed before this is active on the live site.
+
 # Phase 3 setup and administrator guide
 
-The hosted schema and catalog have now been verified. `BACKEND_ENABLED=true` deliberately enables database-backed pages and administrator authentication once setup is ready. Supabase credentials alone do not enable the backend. First-owner provisioning, MFA and hosted private-storage acceptance remain separate steps below; no account is seeded.
+The hosted schema and catalog have now been verified. `BACKEND_ENABLED=true` deliberately enables database-backed pages and administrator authentication once setup is ready. Supabase credentials alone do not enable the backend. First-owner provisioning and hosted private-storage acceptance remain separate steps below; no account is seeded.
 
-Connection update, 2026-10-28: the owner reports the original five migrations completed successfully, and anonymous hosted queries confirm the original catalog is installed. Before enabling database-backed pages, also run `supabase/migrations/20261028000100_current_catalog.sql` to add the fourth book, paperback editions, approved USD prices, Kindle Unlimited notes and contact email. Direct editions remain pending and no sale rights or private files are created. The public adapter now preserves these fields. Hosted owner authentication and Storage acceptance checks are still pending.
-
-Implementation is local. No hosted Supabase project has been connected or migrated. The owner has elected to supply configuration later. This guide describes the remaining setup; it is not a record of completed remote operations.
+Connection update, 2026-10-28: the original five migrations and the current-catalog migration were applied manually and the four-book hosted catalog was verified. Database-backed public pages and administrator sign-in are enabled on the deployed site. Direct editions remain pending; no sale rights or private files have been created. The new password-access migration and matching application deployment are still pending. Hosted owner sign-in and private-storage acceptance must be verified separately.
 
 ## Connect a development project
 
 1. Create or select the intended Supabase development project. Use a fresh project for the initial migration. If it already contains tables with these names, reconcile its migration history before applying this schema.
 2. Put `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in ignored `.env.local`, using `.env.example` as the template. Use the project's publishable key, or legacy **anon** key. The application rejects service-role and secret keys. No database password or service-role key belongs in the browser configuration.
 3. Install the official Supabase CLI. In the project root run `supabase init` if `supabase/config.toml` does not exist, then `supabase login` and `supabase link --project-ref YOUR_PROJECT_REF`. Review `supabase migration list` and `supabase db push --dry-run`, then apply `supabase db push`. These commands have **not** been executed against a hosted project here. Do not run a remote database reset. Keep generated CLI configuration and migration history under version control; keep credentials out.
-4. In Supabase Auth, enable email/password and TOTP MFA. Disable public sign-ups for this staff-only installation; there is no sign-up UI. Configure the site's real HTTPS origin, approved redirect URLs, session policy, password policy and Auth rate limits. The application relies on provider throttling; its behavior must be verified in the actual project.
+4. In Supabase Auth, enable email/password. Disable public sign-ups for this staff-only installation; there is no sign-up UI. Configure the site's real HTTPS origin, approved redirect URLs, session policy, password policy and Auth rate limits. The application relies on provider throttling; its behavior must be verified in the actual project.
 5. Create the first confirmed staff user in Supabase Auth using the dashboard's secure account tools. Copy the UUID, then execute this once in the trusted SQL editor, replacing the placeholder:
 
 ```sql
@@ -21,7 +21,7 @@ values ('REPLACE_WITH_AUTH_USER_UUID', 'Archive owner', 'owner', true);
 
 The first profile requires trusted database administration because no browser user initially has owner privileges. No password or seeded owner account is provided. Subsequent owners can authorize existing Auth users through **Team & access**.
 
-6. Restart Next.js. Open `/admin/login`, sign in, enroll an authenticator and verify a code. Staff operations require `aal2` in both application guards and PostgreSQL policies. Do not remove all owner MFA factors; use a documented Supabase recovery process if locked out.
+6. Run `supabase/migrations/20261028000200_password_admin_access.sql` in the trusted SQL editor after the catalog migration. Deploy the matching application changes, then open `/admin/login` and sign in with email and password. Authenticator verification is no longer required. Active staff membership and role restrictions remain enforced by the server and PostgreSQL. Previously enrolled factors are not deleted by this migration.
 7. Verify that migrations created the **private** `book-covers` and `private-ebooks` buckets, including limits and policies. Confirm no unrelated broad storage policies grant access. Review grants and policies in the real project's Security Advisor.
 8. Execute the connected-project acceptance checklist below before treating administration as production-ready.
 
@@ -29,7 +29,7 @@ Supabase references: [migrations](https://supabase.com/docs/guides/local-develop
 
 ## Everyday administration
 
-| Role | Capabilities after MFA |
+| Role | Capabilities after sign-in |
 | --- | --- |
 | Editor | Create and edit book drafts; save and preview website copy; upload covers; preview books. |
 | Administrator | Editor access plus publishing/unpublishing/archiving, editions and prices, series, private ebooks, file review, orders/customers/enquiries/subscribers and recorded totals. |
@@ -52,7 +52,7 @@ File signatures and EPUB mimetype headers are checked; this is not antivirus sca
 ## Connected-project acceptance checklist — pending
 
 - Apply all five migrations to a clean Supabase development instance; review database lint, RLS and Storage policies.
-- Sign in as owner, administrator, editor and a nonstaff user. Verify correct and expired credentials, MFA enrollment/challenge/recovery, provider rate limits, logout and session expiry. Verify HTTPS cookie attributes and origin protection on the actual deployment.
+- Sign in as owner, administrator, editor and a nonstaff user. Verify correct and expired credentials, password-only access, provider rate limits, logout and session expiry. Verify HTTPS cookie attributes and origin protection on the actual deployment.
 - Create, edit, preview, publish, reorder, unpublish and archive a temporary authentic test book. Verify optimistic concurrency; remove only the newly created test data afterward. Confirm editor publishing/pricing and nonstaff access are denied through direct API requests too.
 - Publish a reversible home/About/Contact change; confirm anonymous readers see only the published version, then restore the approved copy.
 - Upload a safe test cover and ebook via hosted Storage; verify byte validation, private staging, immutable versions, download expiry, cross-role denial, cover visibility before/after publication and failed-upload cleanup. No customer download should exist.

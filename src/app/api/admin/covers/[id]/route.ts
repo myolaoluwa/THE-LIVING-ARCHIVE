@@ -6,7 +6,6 @@ export async function GET(
 ) {
   const session = await adminSession();
   if (!session) return new Response("Unauthorized", { status: 401 });
-  if (session.aal !== "aal2") return new Response("Forbidden", { status: 403 });
   const id = z.uuid().safeParse((await params).id);
   if (!id.success) return new Response("Not found", { status: 404 });
   const { data, error } = await session.client

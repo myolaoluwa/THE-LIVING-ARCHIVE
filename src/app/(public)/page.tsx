@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { authorSubstackNote } from "@/lib/author-links";
 import {
   getPublicBooks,
   getPublicPage,
@@ -132,6 +133,11 @@ export default async function Home() {
             <p>{home.author_introduction}</p>
             <p>{home.author_note}</p>
             <TextLink href="/about">Read Edmund’s story</TextLink>
+            <p>
+              <a className="text-link" href={authorSubstackNote}>
+                Read Edmund’s note on Substack <Arrow diagonal />
+              </a>
+            </p>
             <div className="author-signature">
               Edmund Spencer Katso<span>AUTHOR · EDUCATOR · HISTORIAN</span>
             </div>

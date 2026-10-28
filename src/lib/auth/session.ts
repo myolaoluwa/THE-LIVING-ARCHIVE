@@ -19,8 +19,6 @@ export async function adminSession() {
     error,
   } = await client.auth.getUser();
   if (error || !user) return null;
-  const { data: claims, error: claimsError } = await client.auth.getClaims();
-  if (claimsError || !claims) return null;
   const { data, error: profileError } = await client
     .from("admin_profiles")
     .select("id,auth_user_id,role,display_name,active")
@@ -32,13 +30,11 @@ export async function adminSession() {
     client,
     user,
     profile: profile.data,
-    aal: claims.claims.aal === "aal2" ? "aal2" : "aal1",
   };
 }
 export async function requireAdmin(permission: Permission = "edit") {
   const session = await adminSession();
   if (!session) redirect("/admin/login");
-  if (session.aal !== "aal2") redirect("/admin/mfa");
   if (!permits(session.profile.role, permission))
     redirect("/admin/dashboard?notice=forbidden");
   return session;

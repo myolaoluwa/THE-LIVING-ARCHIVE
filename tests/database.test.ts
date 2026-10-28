@@ -18,7 +18,7 @@ const identities = {
   editor: "aaaaaaaa-0000-4000-8000-000000000003",
   outsider: "aaaaaaaa-0000-4000-8000-000000000004",
 };
-async function actor(role: keyof typeof identities | "anon", aal = "aal2") {
+async function actor(role: keyof typeof identities | "anon", aal = "aal1") {
   await db.exec("reset role");
   await db.query("select set_config('request.jwt.claims',$1,false)", [
     JSON.stringify(
@@ -108,19 +108,25 @@ test("anonymous and authenticated nonstaff cannot read private records or write 
     );
   }
 });
-test("MFA is required by PostgreSQL, even with a valid owner profile", async () => {
-  await actor("owner", "aal1");
-  assert.equal(await count("books"), 4);
-  await assert.rejects(
-    db.exec(
-      "insert into public.books(slug,title) values('without-mfa','Without MFA')",
-    ),
-  );
-  await assert.rejects(
-    db.exec(
-      "select public.set_book_status('20000000-0000-4000-8000-000000000001','draft')",
-    ),
-  );
+test("password-authenticated owners can manage content without MFA", async () => {
+  for (const aal of ["aal1", "aal2"]) {
+    await actor("owner", aal);
+    assert.equal((await db.query<{role:string}>("select private.staff_role() as role")).rows[0].role, "owner");
+    await db.exec("insert into public.books(slug,title) values('password-access-check','Password access check')");
+    await db.exec("delete from public.books where slug='password-access-check'");
+  }
+});
+test("inactive staff and invalid assurance claims do not grant administrator access", async () => {
+  await db.exec("reset role");
+  await db.exec("update public.admin_profiles set active=false where role='editor'");
+  await actor("editor");
+  assert.equal((await db.query<{role:string|null}>("select private.staff_role() as role")).rows[0].role, null);
+  await assert.rejects(db.exec("insert into public.books(slug,title) values('inactive-access','Denied')"));
+  await db.exec("reset role");
+  await db.exec("update public.admin_profiles set active=true where role='editor'");
+  await actor("owner", "invalid");
+  assert.equal((await db.query<{role:string|null}>("select private.staff_role() as role")).rows[0].role, null);
+  await assert.rejects(db.exec("insert into public.books(slug,title) values('invalid-access','Denied')"));
 });
 let newBookId: string;
 let draftData: Record<string, unknown>;

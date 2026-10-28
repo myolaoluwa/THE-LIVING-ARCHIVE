@@ -199,7 +199,7 @@ export default async function AdminSection({
       <section className="admin-panel">
         <h2>People who can manage the archive</h2>
         <p className="admin-help">
-          All staff must verify an authenticator. Only owners manage roles. The
+          Staff sign in with email and password. Only owners manage roles. The
           database prevents removal of the last active owner.
         </p>
         {profiles.map((row) => (
